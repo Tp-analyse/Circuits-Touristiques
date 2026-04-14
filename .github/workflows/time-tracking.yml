@@ -1,0 +1,79 @@
+name: Time Tracking (/spend)
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  spend:
+    if: contains(github.event.comment.body, '/spend')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log time
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+
+            const body = context.payload.comment.body.trim();
+            const issueNumber = context.payload.issue.number;
+            const user = context.payload.comment.user.login;
+            const date = new Date().toISOString().split('T')[0];
+
+            // Parse /spend Xh Ym (or /spend Xh or /spend Ym)
+            const match = body.match(/\/spend\s+(?:(\d+)h)?\s*(?:(\d+)m)?/i);
+            if (!match || (!match[1] && !match[2])) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: '❌ Invalid format. Use `/spend 2h`, `/spend 30m`, or `/spend 1h 30m`'
+              });
+              return;
+            }
+
+            const hours = parseInt(match[1] || '0');
+            const minutes = parseInt(match[2] || '0');
+            const totalMinutes = hours * 60 + minutes;
+            const display = [hours > 0 ? `${hours}h` : '', minutes > 0 ? `${minutes}m` : ''].filter(Boolean).join(' ');
+
+            // Read / update log
+            const logPath = 'time-log.json';
+            let log = {};
+            if (fs.existsSync(logPath)) {
+              log = JSON.parse(fs.readFileSync(logPath, 'utf8'));
+            }
+            const key = String(issueNumber);
+            if (!log[key]) log[key] = [];
+            log[key].push({ user, date, minutes: totalMinutes, display });
+            fs.writeFileSync(logPath, JSON.stringify(log, null, 2) + '\n');
+
+            // Commit and push
+            execSync('git config user.name "github-actions[bot]"');
+            execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
+            execSync('git add time-log.json');
+            execSync(`git commit -m "time: #${issueNumber} +${display} by @${user}"`);
+            execSync(`git push origin HEAD:${context.ref}`);
+
+            // Build summary comment
+            const total = log[key].reduce((s, e) => s + e.minutes, 0);
+            const th = Math.floor(total / 60);
+            const tm = total % 60;
+            const totalDisplay = [th > 0 ? `${th}h` : '', tm > 0 ? `${tm}m` : ''].filter(Boolean).join(' ');
+            const lines = log[key].map(e => `- @${e.user} spent **${e.display}** on ${e.date}`).join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `⏱️ **Time logged:** ${display}\n\n**Time log for this issue:**\n${lines}\n\n**Total: ${totalDisplay}**`
+            });
