@@ -36,7 +36,7 @@ const routerLogin = createBrowserRouter([
 ]);
 
 export default function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => !!window.localStorage.getItem("token"));
 
 	const loginHandler = () => {
 		setIsLoggedIn(true);

@@ -6,6 +6,7 @@ export default function Deconnexion() {
     const auth = useContext(AuthContext);
 
     useEffect(() => {
+        window.localStorage.removeItem("token");
         auth.logout();
     }, []);
 

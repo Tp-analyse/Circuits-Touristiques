@@ -27,19 +27,40 @@ export default function FormulaireMonument() {
         }
 
         if (isNaN(prix) || Number(prix) < 0) {
-            setMessage("Le prix doit être un nombre positif.");
+            setMessage("Le prix doit etre un nombre positif.");
             return;
         }
 
-        // TODO: POST au backend pour créer le monument
-        // await fetch("/api/monuments", {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({ nom, date_construction, resume_histoire, prix: Number(prix) }),
-        // });
+        const token = window.localStorage.getItem("token");
+        const headers = { "Content-Type": "application/json" };
 
-        setMessage("Monument créé avec succès.");
-        setForm(EMPTY_FORM);
+        if (token) {
+            headers.Authorization = token;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/api/monuments", {
+                method: "POST",
+                headers,
+                body: JSON.stringify({
+                    nom,
+                    date_construction,
+                    resume_histoire,
+                    prix: Number(prix),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "La creation du monument a echoue.");
+            }
+
+            setMessage("Monument cree avec succes.");
+            setForm(EMPTY_FORM);
+        } catch (error) {
+            setMessage(error.message || "La creation du monument a echoue.");
+        }
     }
 
     return (

@@ -18,7 +18,7 @@ export default function LoginForm() {
         setForm((prev) => ({ ...prev, [name]: value }));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         const { courriel, motDePasse } = form;
@@ -28,9 +28,28 @@ export default function LoginForm() {
             return;
         }
 
-        // TODO: POST au backend pour l'authentification
-        auth.login();
-        navigate("/");
+        try {
+            const response = await fetch("http://localhost:3000/api/users/connexion", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: courriel,
+                    password: motDePasse,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Connexion echouee.");
+            }
+
+            window.localStorage.setItem("token", data.token);
+            auth.login();
+            navigate("/");
+        } catch (error) {
+            setMessage(error.message || "Connexion echouee.");
+        }
     }
 
     return (
