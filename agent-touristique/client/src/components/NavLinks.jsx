@@ -12,9 +12,14 @@ export default function NavLinks() {
 					<NavLink to="/login">Connexion</NavLink>
 				</li>
 			) : (
-				<li>
-					<NavLink to="/deconnexion">Déconnexion</NavLink>
-				</li>
+				<>
+					<li>
+						<NavLink to="/monuments/nouveau">Nouveau monument</NavLink>
+					</li>
+					<li>
+						<NavLink to="/deconnexion">Déconnexion</NavLink>
+					</li>
+				</>
 			)}
 		</ul>
     );

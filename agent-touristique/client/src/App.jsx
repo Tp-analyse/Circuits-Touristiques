@@ -4,6 +4,7 @@ import { useState } from "react";
 import RootLayout from "./pages/Roots";
 import Deconnexion from "./pages/Deconnexion";
 import LoginForm from "./pages/LoginForm";
+import FormulaireMonument from "./pages/FormulaireMonument";
 import { AuthContext } from "./context/auth-context";
 
 const router = createBrowserRouter([
@@ -25,6 +26,7 @@ const routerLogin = createBrowserRouter([
         children: [
             { path: '/', element: <Navigate to="/" /> },
             { path: '/login', element: <Navigate to="/" /> },
+            { path: '/monuments/nouveau', element: <FormulaireMonument /> },
             { path: '/deconnexion', element: <Deconnexion /> },
         ]
     }
