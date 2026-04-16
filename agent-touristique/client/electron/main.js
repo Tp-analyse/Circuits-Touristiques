@@ -1,24 +1,20 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 
-function createWindow() {
-    const win = new BrowserWindow({
+app.whenReady().then(() => {
+    Menu.setApplicationMenu(null);
+
+    const fenetre = new BrowserWindow({
         width: 1200,
-        height: 800,
+        height: 850,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
         },
     });
 
-    win.loadURL('http://localhost:8080');
-}
-
-app.whenReady().then(createWindow);
+    fenetre.loadURL('http://localhost:8080');
+});
 
 app.on('window-all-closed', () => {
     app.quit();
-});
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
