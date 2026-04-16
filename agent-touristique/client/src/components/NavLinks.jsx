@@ -14,6 +14,9 @@ export default function NavLinks() {
 			) : (
 				<>
 					<li>
+                        <NavLink to="/acceuil">Accueil</NavLink>
+                    </li>
+					<li>
 						<NavLink to="/monuments/nouveau">Nouveau monument</NavLink>
 					</li>
 					<li>
