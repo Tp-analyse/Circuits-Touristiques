@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -15,121 +15,54 @@ app.get('/', function (request, response) {
 app.listen(port)
 
 
-app.get('/getAllProducts', function (request, response) {
-	let con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "sasa7272",
-		database: "gestionProduit"
-	})
 
-	con.connect(function (err) {
-		if (err) throw err;
+function createClientTable() {
+    return new Promise((resolve, reject) => {
+        let con = mysql.createConnection({
+            host: "localhost",
+            user: "data",
+            password: "1234",
+            database: "gestionProduit"
+        });
 
-		con.query("SELECT * FROM Produit", function (err, result, fields) {
-			if (err) throw err;
-			console.log(JSON.stringify(result));
-			response.status(200).json(result);
-		})
-	})
-})
+        con.connect(function (err) {
+            if (err) {
+                reject("Database connection error: " + err);
+                return;
+            }
 
-app.get('/getProduct/:id', function (request, response) {
-	let id = request.params.id;
+            const createTableQuery = `
+                CREATE TABLE IF NOT EXISTS client (
+                    clientId INT AUTO_INCREMENT PRIMARY KEY,
+                    numTelephone VARCHAR(20) NOT NULL,
+                    email VARCHAR(100) NOT NULL,
+                    nomPrenom VARCHAR(100) NOT NULL
+                )
+            `;
 
-	let con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "sasa7272",
-		database: "gestionProduit"
-	})
+            con.query(createTableQuery, function (err, result) {
+                con.end();
+                if (err) {
+                    reject("Error creating table: " + err);
+                    return;
+                }
+                resolve("Table 'client' created successfully");
+            });
+        });
+    });
+}
 
-	con.connect(function (err) {
-		if (err) throw err;
+createClientTable()
+    .then(message => {
+        console.log(message);
 
-		con.query("SELECT * FROM Produit WHERE id=" + id, function (err, result, fields) {
-			if (err) throw err;
-
-			if (result.length > 0) {
-				console.log(JSON.stringify(result[0]));
-				response.status(200).json({
-					message: "Produit trouvé",
-					data: result[0]
-				});
-			} else {
-				console.log("Produit non trouvé");
-				response.status(404).json({
-					message: "Produit non trouvé",
-					data: {}
-				});
-			}
-		})
-	})
-})
-
-app.post('/createProduct', function (request, response) {
-	const produit = request.body;
-
-	console.log(produit.description + " " + produit.image + " " + produit.prix + " " + produit.details);
-	console.log(JSON.stringify(produit));
-
-	let con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "sasa7272",
-		database: "gestionProduit"
-	})
-
-	con.connect(function (err) {
-		if (err) throw err;
-
-		con.query("INSERT INTO Produit values(null, '" + produit.description + "', '" + produit.image + "', " + produit.prix + ", '" + produit.details + "')", function (err, result, fields) {
-			if (err) throw err;
-			response.status(200).send("Produit ajoutée");
-		})
-	})
-})
-
-app.put("/updateProduit/:id", function (request, response) {
-	const id = request.params.id;
-	const produit = request.body;
-
-	console.log(produit.description + " " + produit.image + " " + produit.prix + " " + produit.details);
-	console.log(JSON.stringify(produit));
-
-	let con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "sasa7272",
-		database: "gestionProduit"
-	})
-
-	con.connect(function (err) {
-		if (err) throw err;
-
-		con.query("update Produit set description='" + produit.description + "', image='" + produit.image + "', prix=" + produit.prix + ", details='" + produit.details + "' where id=" + id, function (err, result, fields) {
-			if (err) throw err;
-			response.status(200).send("Produit modifiée");
-		})
-	})
-})
-
-app.delete("/deleteProduit/:id", function (request, response) {
-	const id = request.params.id;
-
-	let con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "sasa7272",
-		database: "gestionProduit"
-	})
-
-	con.connect(function (err) {
-		if (err) throw err;
-
-		con.query("DELETE FROM Produit where id=" + id, function (err, result, fields) {
-			if (err) throw err;
-			response.status(200).send("Produit supprimée");
-		})
-	})
-})
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+    })
+    .catch(error => {
+        console.error(error);
+        app.listen(port, () => {
+            console.log(`Server running on port ${port} (table creation failed)`);
+        });
+    });
