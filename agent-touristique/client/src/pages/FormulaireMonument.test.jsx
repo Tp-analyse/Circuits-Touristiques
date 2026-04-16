@@ -10,6 +10,15 @@ describe("FormulaireMonument", () => {
         expect(screen.getByText("Créer un monument")).toBeInTheDocument();
     });
 
+    it("affiche tous les champs du formulaire", () => {
+        render(<FormulaireMonument />);
+
+        expect(screen.getByLabelText("Nom")).toBeInTheDocument();
+        expect(screen.getByLabelText("Date de construction")).toBeInTheDocument();
+        expect(screen.getByLabelText("Résumé historique")).toBeInTheDocument();
+        expect(screen.getByLabelText("Prix d'entrée ($)")).toBeInTheDocument();
+    });
+
     it("affiche les boutons Effacer et Créer", () => {
         render(<FormulaireMonument />);
 
@@ -23,6 +32,19 @@ describe("FormulaireMonument", () => {
         fireEvent.click(screen.getByRole("button", { name: "Créer" }));
 
         expect(screen.getByText("Tous les champs sont obligatoires.")).toBeInTheDocument();
+    });
+
+    it("affiche un message de succès quand le formulaire est soumis correctement", () => {
+        render(<FormulaireMonument />);
+
+        fireEvent.change(screen.getByLabelText("Nom"), { target: { value: "Tour Eiffel" } });
+        fireEvent.change(screen.getByLabelText("Date de construction"), { target: { value: "1889-05-06" } });
+        fireEvent.change(screen.getByLabelText("Résumé historique"), { target: { value: "Monument célèbre." } });
+        fireEvent.change(screen.getByLabelText("Prix d'entrée ($)"), { target: { value: "25" } });
+
+        fireEvent.click(screen.getByRole("button", { name: "Créer" }));
+
+        expect(screen.getByText("Monument créé avec succès.")).toBeInTheDocument();
     });
 
     it("remet le formulaire à zéro quand on clique sur Effacer", () => {

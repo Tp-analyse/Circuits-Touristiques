@@ -2,9 +2,8 @@ import { useState } from "react";
 
 const EMPTY_FORM = {
     nom: "",
-    description: "",
-    ville: "",
-    dateInauguration: "",
+    date_construction: "",
+    resume_histoire: "",
     prix: "",
 };
 
@@ -20,9 +19,9 @@ export default function FormulaireMonument() {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const { nom, description, ville, dateInauguration, prix } = form;
+        const { nom, date_construction, resume_histoire, prix } = form;
 
-        if (!nom || !description || !ville || !dateInauguration || !prix) {
+        if (!nom || !date_construction || !resume_histoire || !prix) {
             setMessage("Tous les champs sont obligatoires.");
             return;
         }
@@ -36,7 +35,7 @@ export default function FormulaireMonument() {
         // await fetch("/api/monuments", {
         //     method: "POST",
         //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({ nom, description, ville, dateInauguration, prix: Number(prix) }),
+        //     body: JSON.stringify({ nom, date_construction, resume_histoire, prix: Number(prix) }),
         // });
 
         setMessage("Monument créé avec succès.");
@@ -59,33 +58,22 @@ export default function FormulaireMonument() {
                 </div>
 
                 <div>
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="ville">Ville</label>
+                    <label htmlFor="date_construction">Date de construction</label>
                     <input
-                        id="ville"
-                        name="ville"
-                        type="text"
-                        value={form.ville}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="dateInauguration">Date d'inauguration</label>
-                    <input
-                        id="dateInauguration"
-                        name="dateInauguration"
+                        id="date_construction"
+                        name="date_construction"
                         type="date"
-                        value={form.dateInauguration}
+                        value={form.date_construction}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="resume_histoire">Résumé historique</label>
+                    <textarea
+                        id="resume_histoire"
+                        name="resume_histoire"
+                        value={form.resume_histoire}
                         onChange={handleChange}
                     />
                 </div>
