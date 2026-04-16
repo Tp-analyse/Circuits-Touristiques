@@ -6,15 +6,16 @@ import Deconnexion from "./pages/Deconnexion";
 import LoginForm from "./pages/LoginForm";
 import FormulaireMonument from "./pages/FormulaireMonument";
 import { AuthContext } from "./context/auth-context";
+import Acceuil from "./pages/Acceuil";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <RootLayout />,
         children: [
-            { path: '/', element: <Navigate to="/login" /> },
-            { path: '/login', element: <LoginForm /> },
-            { path: '/deconnexion', element: <Navigate to="/login" /> },
+            { index: true, element: <Navigate to="/login" /> },
+            { path: 'login', element: <LoginForm /> },
+            { path: 'deconnexion', element: <Navigate to="/login" /> },
         ]
     }
 ]);
@@ -24,10 +25,12 @@ const routerLogin = createBrowserRouter([
         path: "/",
         element: <RootLayout />,
         children: [
-            { path: '/', element: <Navigate to="/" /> },
-            { path: '/login', element: <Navigate to="/" /> },
-            { path: '/monuments/nouveau', element: <FormulaireMonument /> },
-            { path: '/deconnexion', element: <Deconnexion /> },
+            { index: true, element: <Navigate to="/acceuil" /> },
+            { path: 'login', element: <Navigate to="/acceuil" /> },
+            { path: 'acceuil', element: <Acceuil /> },
+            { path: 'monuments/actuel', element: <Acceuil /> },
+            { path: 'monuments/nouveau', element: <FormulaireMonument /> },
+            { path: 'deconnexion', element: <Deconnexion /> },
         ]
     }
 ]);
