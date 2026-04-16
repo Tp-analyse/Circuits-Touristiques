@@ -1,11 +1,26 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
 import LoginForm from "./LoginForm";
 
 describe("LoginForm", () => {
+    beforeEach(() => {
+        vi.stubGlobal("fetch", vi.fn());
+        Object.defineProperty(window, "localStorage", {
+            value: {
+                setItem: vi.fn(),
+            },
+            configurable: true,
+        });
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        vi.restoreAllMocks();
+    });
+
     it("affiche les champs courriel et mot de passe", () => {
         const mockAuth = { isLoggedIn: false, login: vi.fn(), logout: vi.fn() };
 
@@ -51,9 +66,13 @@ describe("LoginForm", () => {
         expect(screen.getByText("Tous les champs sont obligatoires.")).toBeInTheDocument();
     });
 
-    it("appelle auth.login() quand le formulaire est soumis avec des valeurs valides", () => {
+    it("appelle auth.login() quand le formulaire est soumis avec des valeurs valides", async () => {
         const mockLogin = vi.fn();
         const mockAuth = { isLoggedIn: false, login: mockLogin, logout: vi.fn() };
+        fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({ token: "jwt-test" }),
+        });
 
         render(
             <AuthContext.Provider value={mockAuth}>
@@ -71,6 +90,8 @@ describe("LoginForm", () => {
         });
         fireEvent.click(screen.getByRole("button", { name: "Se connecter" }));
 
-        expect(mockLogin).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(mockLogin).toHaveBeenCalled();
+        });
     });
 });
