@@ -105,10 +105,12 @@ export default function FormulaireMonument() {
 
                 {message && <p>{message}</p>}
 
-                <button type="button" onClick={() => { setForm(EMPTY_FORM); setMessage(""); }}>
-                    Effacer
-                </button>
-                <button type="submit">Créer</button>
+                <div className="form-actions">
+                    <button type="button" onClick={() => { setForm(EMPTY_FORM); setMessage(""); }}>
+                        Effacer
+                    </button>
+                    <button type="submit">Créer</button>
+                </div>
             </form>
         </div>
     );
