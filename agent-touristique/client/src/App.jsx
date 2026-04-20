@@ -5,6 +5,7 @@ import RootLayout from "./pages/Roots";
 import Deconnexion from "./pages/Deconnexion";
 import LoginForm from "./pages/LoginForm";
 import FormulaireMonument from "./pages/FormulaireMonument";
+import FormulaireCircuit from "./pages/FormulaireCircuit";
 import { AuthContext } from "./context/auth-context";
 import Acceuil from "./pages/Acceuil";
 
@@ -30,6 +31,7 @@ const routerLogin = createBrowserRouter([
             { path: 'acceuil', element: <Acceuil /> },
             { path: 'monuments/actuel', element: <Acceuil /> },
             { path: 'monuments/nouveau', element: <FormulaireMonument /> },
+            { path: 'circuits/nouveau', element: <FormulaireCircuit /> },
             { path: 'deconnexion', element: <Deconnexion /> },
         ]
     }

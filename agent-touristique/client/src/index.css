@@ -105,7 +105,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     background-color: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -118,7 +119,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     border-color: var(--blue-light);
 }
 
@@ -159,6 +161,61 @@ button[type="button"]:hover {
 .form-actions {
     display: flex;
     gap: 0.75rem;
+}
+
+.itineraire-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.itineraire-controls select {
+    flex: 1;
+}
+
+.itineraire-list-container > p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.itineraire-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.itineraire-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.65rem 0.8rem;
+}
+
+.itineraire-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.itineraire-item-actions button {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.35rem 0.6rem;
+}
+
+.itineraire-item-actions button:hover:not(:disabled) {
+    border-color: var(--blue-light);
+    color: var(--text);
+}
+
+.itineraire-item-actions button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 form > p {

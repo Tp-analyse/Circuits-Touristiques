@@ -19,10 +19,11 @@ describe("NavLinks", () => {
 
         expect(screen.getByText("Connexion")).toBeInTheDocument();
         expect(screen.queryByText("Nouveau monument")).not.toBeInTheDocument();
+        expect(screen.queryByText("Nouveau circuit")).not.toBeInTheDocument();
         expect(screen.queryByText("Déconnexion")).not.toBeInTheDocument();
     });
 
-    it("affiche les liens Nouveau monument et Déconnexion quand l'utilisateur est connecté", () => {
+    it("affiche les liens Nouveau monument, Nouveau circuit et Déconnexion quand l'utilisateur est connecté", () => {
         const mockAuth = { isLoggedIn: true, login: vi.fn(), logout: vi.fn() };
 
         render(
@@ -34,6 +35,7 @@ describe("NavLinks", () => {
         );
 
         expect(screen.getByText("Nouveau monument")).toBeInTheDocument();
+        expect(screen.getByText("Nouveau circuit")).toBeInTheDocument();
         expect(screen.getByText("Déconnexion")).toBeInTheDocument();
         expect(screen.queryByText("Connexion")).not.toBeInTheDocument();
     });

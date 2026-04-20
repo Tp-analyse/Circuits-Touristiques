@@ -20,6 +20,9 @@ export default function NavLinks() {
 						<NavLink to="/monuments/nouveau">Nouveau monument</NavLink>
 					</li>
 					<li>
+						<NavLink to="/circuits/nouveau">Nouveau circuit</NavLink>
+					</li>
+					<li>
 						<NavLink to="/deconnexion">Déconnexion</NavLink>
 					</li>
 				</>
