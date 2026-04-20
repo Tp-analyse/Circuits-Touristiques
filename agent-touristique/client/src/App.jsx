@@ -6,6 +6,8 @@ import Deconnexion from "./pages/Deconnexion";
 import LoginForm from "./pages/LoginForm";
 import FormulaireMonument from "./pages/FormulaireMonument";
 import FormulaireCircuit from "./pages/FormulaireCircuit";
+import ModifierMonument from "./pages/ModifierMonument";
+import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
 import Acceuil from "./pages/Acceuil";
 
@@ -15,10 +17,10 @@ const router = createBrowserRouter([
         element: <RootLayout />,
         children: [
             { index: true, element: <Navigate to="/login" /> },
-            { path: 'login', element: <LoginForm /> },
-            { path: 'deconnexion', element: <Navigate to="/login" /> },
-        ]
-    }
+            { path: "login", element: <LoginForm /> },
+            { path: "deconnexion", element: <Navigate to="/login" /> },
+        ],
+    },
 ]);
 
 const routerLogin = createBrowserRouter([
@@ -27,30 +29,34 @@ const routerLogin = createBrowserRouter([
         element: <RootLayout />,
         children: [
             { index: true, element: <Navigate to="/acceuil" /> },
-            { path: 'login', element: <Navigate to="/acceuil" /> },
-            { path: 'acceuil', element: <Acceuil /> },
-            { path: 'monuments/actuel', element: <Acceuil /> },
-            { path: 'monuments/nouveau', element: <FormulaireMonument /> },
-            { path: 'circuits/nouveau', element: <FormulaireCircuit /> },
-            { path: 'deconnexion', element: <Deconnexion /> },
-        ]
-    }
+            { path: "login", element: <Navigate to="/acceuil" /> },
+            { path: "acceuil", element: <Acceuil /> },
+            { path: "monuments/actuel", element: <Acceuil /> },
+            { path: "monuments/nouveau", element: <FormulaireMonument /> },
+            { path: "monuments/:id/modifier", element: <ModifierMonument /> },
+            { path: "circuits/nouveau", element: <FormulaireCircuit /> },
+            { path: "circuits/:id/modifier", element: <ModifierCircuit /> },
+            { path: "deconnexion", element: <Deconnexion /> },
+        ],
+    },
 ]);
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(() => !!window.localStorage.getItem("token"));
 
-	const loginHandler = () => {
-		setIsLoggedIn(true);
-	}
+    const loginHandler = () => {
+        setIsLoggedIn(true);
+    };
 
-	const logoutHandler = () => {
-		setIsLoggedIn(false);
-	}
+    const logoutHandler = () => {
+        setIsLoggedIn(false);
+    };
 
-	return (
-		<AuthContext.Provider value={{ isLoggedIn: isLoggedIn, login: loginHandler, logout: logoutHandler }}>
-			<RouterProvider router={isLoggedIn ? routerLogin : router} />
-		</AuthContext.Provider>
-	);
+    return (
+        <AuthContext.Provider
+            value={{ isLoggedIn: isLoggedIn, login: loginHandler, logout: logoutHandler }}
+        >
+            <RouterProvider router={isLoggedIn ? routerLogin : router} />
+        </AuthContext.Provider>
+    );
 }
