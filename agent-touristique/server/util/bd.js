@@ -17,6 +17,8 @@ const query = (sql, params = []) => {
 };
 
 const initDB = async () => {
+    await query('DROP TABLE IF EXISTS circuit_monument');
+    await query('DROP TABLE IF EXISTS circuit');
     await query('DROP TABLE IF EXISTS monument');
     await query('DROP TABLE IF EXISTS client');
 
@@ -38,6 +40,32 @@ const initDB = async () => {
             resume_histoire TEXT NOT NULL,
             prix DECIMAL(10,2) NOT NULL,
             nb_etoiles INT NOT NULL DEFAULT 0
+        )
+    `);
+
+    await query(`
+        CREATE TABLE circuit (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nom VARCHAR(100) NOT NULL,
+            nbjours INT NOT NULL,
+            ville_depart VARCHAR(100) NOT NULL,
+            ville_arrivee VARCHAR(100) NOT NULL
+        )
+    `);
+
+    await query(`
+        CREATE TABLE circuit_monument (
+            circuit_id INT NOT NULL,
+            monument_id INT NOT NULL,
+            ordre INT NOT NULL,
+            PRIMARY KEY (circuit_id, ordre),
+            UNIQUE KEY unique_circuit_monument (circuit_id, monument_id),
+            CONSTRAINT fk_circuit_monument_circuit
+                FOREIGN KEY (circuit_id) REFERENCES circuit(id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_circuit_monument_monument
+                FOREIGN KEY (monument_id) REFERENCES monument(id)
+                ON DELETE RESTRICT
         )
     `);
 

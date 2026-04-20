@@ -5,6 +5,7 @@ const { initDB, populateDatabase } = require('./util/bd');
 const errorHandler = require('./handler/error-handler');
 const usersRoutes = require('./routes/users-routes');
 const monumentsRoutes = require('./routes/monuments-routes');
+const circuitsRoutes = require('./routes/circuits-routes');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 
 app.use('/api/users', usersRoutes);
 app.use('/api/monuments', monumentsRoutes);
+app.use('/api/circuits', circuitsRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Route non trouvée');
