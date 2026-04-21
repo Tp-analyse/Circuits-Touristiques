@@ -19,9 +19,6 @@ export default function NavLinks() {
                         <NavLink to="/accueil">Accueil</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/inscription">Inscription</NavLink>
-                    </li>
-                    <li>
                         <NavLink to="/deconnexion">Déconnexion</NavLink>
                     </li>
                 </>

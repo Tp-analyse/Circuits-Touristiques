@@ -16,6 +16,7 @@ const routerNotLoggedIn = createBrowserRouter([
             { path: "/", element: <Navigate to="/login" /> },
             { path: "/login", element: <LoginForm /> },
             { path: "/accueil", element: <Navigate to="/login" /> },
+            { path: "/inscriptionClient", element: <InscriptionClient /> },
             { path: "/deconnexion", element: <Navigate to="/login" /> }
         ]
     }
@@ -29,7 +30,6 @@ const routerLoggedIn = createBrowserRouter([
             { path: "/", element: <Navigate to="/accueil" /> },
             { path: "/login", element: <Navigate to="/accueil" /> },
             { path: "/accueil", element: <HomePage /> },
-            { path: "/inscription", element: <InscriptionClient /> },
             { path: "/deconnexion", element: <Logout /> }
         ]
     }
