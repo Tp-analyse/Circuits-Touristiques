@@ -28,6 +28,7 @@ export default function Acceuil() {
 	const [monuments, setMonuments] = useState([]);
 	const [circuits, setCircuits] = useState([]);
 	const [message, setMessage] = useState("");
+	const [recherche, setRecherche] = useState("");
 
 	useEffect(() => {
 		async function fetchData() {
@@ -126,6 +127,10 @@ export default function Acceuil() {
 		}
 	}
 
+	const monumentsFiltres = monuments.filter((monument) =>
+		monument.nom.toLowerCase().includes(recherche.toLowerCase())
+	);
+
 	return (
 		<div className="accueil-page">
 			<section className="accueil-hero">
@@ -138,6 +143,12 @@ export default function Acceuil() {
 				<section className="catalog-section">
 					<div className="catalog-section-header">
 						<h2 className="section-kicker">Monuments</h2>
+						<input
+							type="text"
+							placeholder="Rechercher un monument..."
+							value={recherche}
+							onChange={(e) => setRecherche(e.target.value)}
+						/>
 						<span className="section-count">{monuments.length}</span>
 					</div>
 
@@ -145,7 +156,7 @@ export default function Acceuil() {
 						<p className="empty-state">Aucun monument trouve.</p>
 					) : (
 						<ul className="catalog-grid">
-							{monuments.map((monument) => (
+							{monumentsFiltres.map((monument) => (
 								<li key={monument.id} className="catalog-card monument-card">
 									<div className="catalog-card-header">
 										<div>
