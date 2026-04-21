@@ -1,141 +1,75 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EMPTY_FORM = {
     nom: "",
-    nbjours: "",
-    villeDepart: "",
-    villeArrivee: "",
+    date_construction: "",
+    resume_histoire: "",
+    prix: "",
+    nb_etoiles: "",
 };
 
-export default function ModifierCircuit() {
+export default function ModifierMonument() {
     const [form, setForm] = useState(EMPTY_FORM);
     const [message, setMessage] = useState("");
-    const [monuments, setMonuments] = useState([]);
-    const [selectedMonumentId, setSelectedMonumentId] = useState("");
-    const [itineraire, setItineraire] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const { id } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchMonument() {
             try {
-                const responseMonuments = await fetch("http://localhost:3000/api/monuments");
-                const dataMonuments = await responseMonuments.json();
+                const response = await fetch(`http://localhost:3000/api/monuments/${id}`);
+                const data = await response.json();
 
-                if (!responseMonuments.ok) {
-                    throw new Error(dataMonuments.message || "Impossible de charger les monuments.");
+                if (!response.ok) {
+                    throw new Error(data.message || "Impossible de charger le monument.");
                 }
 
-                const responseCircuit = await fetch(`http://localhost:3000/api/circuits/${id}`);
-                const dataCircuit = await responseCircuit.json();
+                const monument = data.monument;
 
-                if (!responseCircuit.ok) {
-                    throw new Error(dataCircuit.message || "Impossible de charger le circuit.");
-                }
-
-                const monumentsData = dataMonuments.monuments || [];
-                const circuit = dataCircuit.circuit;
-
-                setMonuments(monumentsData);
                 setForm({
-                    nom: circuit.nom || "",
-                    nbjours: circuit.nbjours || "",
-                    villeDepart: circuit.ville_depart || "",
-                    villeArrivee: circuit.ville_arrivee || "",
+                    nom: monument.nom || "",
+                    date_construction: monument.date_construction
+                        ? monument.date_construction.slice(0, 10)
+                        : "",
+                    resume_histoire: monument.resume_histoire || "",
+                    prix: monument.prix || "",
+                    nb_etoiles: monument.nb_etoiles || "",
                 });
-                setItineraire(circuit.itineraire || []);
             } catch (error) {
-                setMessage(error.message || "Impossible de charger le circuit.");
+                setMessage(error.message || "Impossible de charger le monument.");
             } finally {
                 setIsLoading(false);
             }
         }
 
-        fetchData();
+        fetchMonument();
     }, [id]);
-
-    const monumentsDisponibles = useMemo(() => {
-        const selectedIds = new Set(itineraire.map((item) => item.id));
-        return monuments.filter((monument) => !selectedIds.has(monument.id));
-    }, [monuments, itineraire]);
-
-    useEffect(() => {
-        if (monumentsDisponibles.length === 0) {
-            setSelectedMonumentId("");
-            return;
-        }
-
-        const stillExists = monumentsDisponibles.some(
-            (monument) => String(monument.id) === selectedMonumentId
-        );
-
-        if (!stillExists) {
-            setSelectedMonumentId(String(monumentsDisponibles[0].id));
-        }
-    }, [monumentsDisponibles, selectedMonumentId]);
 
     function handleChange(e) {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     }
 
-    function addMonumentToItineraire() {
-        if (!selectedMonumentId) {
-            return;
-        }
-
-        const monumentToAdd = monumentsDisponibles.find(
-            (monument) => String(monument.id) === selectedMonumentId
-        );
-
-        if (!monumentToAdd) {
-            return;
-        }
-
-        setItineraire((prev) => [...prev, monumentToAdd]);
-        setMessage("");
-    }
-
-    function removeFromItineraire(monumentId) {
-        setItineraire((prev) => prev.filter((item) => item.id !== monumentId));
-    }
-
-    function moveInItineraire(index, direction) {
-        const newIndex = index + direction;
-
-        if (newIndex < 0 || newIndex >= itineraire.length) {
-            return;
-        }
-
-        setItineraire((prev) => {
-            const copy = [...prev];
-            const temp = copy[index];
-            copy[index] = copy[newIndex];
-            copy[newIndex] = temp;
-            return copy;
-        });
-    }
-
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const { nom, nbjours, villeDepart, villeArrivee } = form;
+        const { nom, date_construction, resume_histoire, prix, nb_etoiles } = form;
 
-        if (!nom || !nbjours || !villeDepart || !villeArrivee) {
+        if (!nom || !date_construction || !resume_histoire || !prix || !nb_etoiles) {
             setMessage("Tous les champs sont obligatoires.");
             return;
         }
 
-        if (Number.isNaN(Number(nbjours)) || Number(nbjours) <= 0) {
-            setMessage("Le nombre de jours doit etre un nombre positif.");
+        if (isNaN(prix) || Number(prix) < 0) {
+            setMessage("Le prix doit etre un nombre positif.");
             return;
         }
 
-        if (itineraire.length === 0) {
-            setMessage("Ajoutez au moins un monument dans l itineraire.");
+        if (isNaN(nb_etoiles) || Number(nb_etoiles) < 1 || Number(nb_etoiles) > 5) {
+            setMessage("Le nombre d etoiles doit etre entre 1 et 5.");
             return;
         }
 
@@ -147,27 +81,27 @@ export default function ModifierCircuit() {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/circuits/${id}`, {
+            const response = await fetch(`http://localhost:3000/api/monuments/${id}`, {
                 method: "PATCH",
                 headers,
                 body: JSON.stringify({
                     nom,
-                    nbjours: Number(nbjours),
-                    ville_depart: villeDepart,
-                    ville_arrivee: villeArrivee,
-                    itineraire: itineraire.map((monument) => monument.id),
+                    date_construction,
+                    resume_histoire,
+                    prix: Number(prix),
+                    nb_etoiles: Number(nb_etoiles),
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "La modification du circuit a echoue.");
+                throw new Error(data.message || "La modification du monument a echoue.");
             }
 
             navigate("/acceuil");
         } catch (error) {
-            setMessage(error.message || "La modification du circuit a echoue.");
+            setMessage(error.message || "La modification du monument a echoue.");
         }
     }
 
@@ -177,7 +111,7 @@ export default function ModifierCircuit() {
 
     return (
         <div>
-            <h2>Modifier un circuit</h2>
+            <h2>Modifier un monument</h2>
 
             <form onSubmit={handleSubmit}>
                 <div>
@@ -192,106 +126,50 @@ export default function ModifierCircuit() {
                 </div>
 
                 <div>
-                    <label htmlFor="nbjours">Nombre de jours</label>
+                    <label htmlFor="date_construction">Date de construction</label>
                     <input
-                        id="nbjours"
-                        name="nbjours"
+                        id="date_construction"
+                        name="date_construction"
+                        type="date"
+                        value={form.date_construction}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="resume_histoire">Resume historique</label>
+                    <textarea
+                        id="resume_histoire"
+                        name="resume_histoire"
+                        value={form.resume_histoire}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="prix">Prix d entree ($)</label>
+                    <input
+                        id="prix"
+                        name="prix"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={form.prix}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="nb_etoiles">Nombre d etoiles</label>
+                    <input
+                        id="nb_etoiles"
+                        name="nb_etoiles"
                         type="number"
                         min="1"
-                        step="1"
-                        value={form.nbjours}
+                        max="5"
+                        value={form.nb_etoiles}
                         onChange={handleChange}
                     />
-                </div>
-
-                <div>
-                    <label htmlFor="villeDepart">Ville de depart</label>
-                    <input
-                        id="villeDepart"
-                        name="villeDepart"
-                        type="text"
-                        value={form.villeDepart}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="villeArrivee">Ville d arrivee</label>
-                    <input
-                        id="villeArrivee"
-                        name="villeArrivee"
-                        type="text"
-                        value={form.villeArrivee}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="monument-select">Ajouter un monument a l itineraire</label>
-                    <div>
-                        <select
-                            id="monument-select"
-                            value={selectedMonumentId}
-                            onChange={(e) => setSelectedMonumentId(e.target.value)}
-                            disabled={monumentsDisponibles.length === 0}
-                        >
-                            {monumentsDisponibles.length === 0 ? (
-                                <option value="">Aucun monument disponible</option>
-                            ) : (
-                                monumentsDisponibles.map((monument) => (
-                                    <option key={monument.id} value={monument.id}>
-                                        {monument.nom}
-                                    </option>
-                                ))
-                            )}
-                        </select>
-
-                        <button type="button" onClick={addMonumentToItineraire}>
-                            Ajouter
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <p>Itineraire</p>
-                    {itineraire.length === 0 ? (
-                        <p>Aucun monument selectionne.</p>
-                    ) : (
-                        <ul>
-                            {itineraire.map((monument, index) => (
-                                <li key={monument.id}>
-                                    <span>
-                                        {index + 1}. {monument.nom}
-                                    </span>
-
-                                    <div style={{ display: "inline-flex", gap: "10px", marginLeft: "10px" }}>
-                                        <button
-                                            type="button"
-                                            onClick={() => moveInItineraire(index, -1)}
-                                            disabled={index === 0}
-                                        >
-                                            Monter
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => moveInItineraire(index, 1)}
-                                            disabled={index === itineraire.length - 1}
-                                        >
-                                            Descendre
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFromItineraire(monument.id)}
-                                        >
-                                            Retirer
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
                 </div>
 
                 {message && <p>{message}</p>}
