@@ -171,7 +171,7 @@ export default function FormulaireCircuit() {
 
     return (
         <div>
-            <h2>Creer un circuit</h2>
+            <h2>Créer un circuit</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="nom">Nom</label>
