@@ -189,20 +189,20 @@ const modifierCircuit = async (req, res, next) => {
     const { id } = req.params;
     const { nom, nbjours, ville_depart, ville_arrivee, itineraire } = req.body;
 
-
     if (!Array.isArray(itineraire) || itineraire.length === 0) {
         return next(new HttpError("L'itinéraire doit contenir au moins un monument.", 422));
     }
 
+    // Convert monument IDs to numbers and validate
     const monumentIds = itineraire.map((monumentId) => Number(monumentId));
     const hasInvalidMonumentId = monumentIds.some(
         (monumentId) => !Number.isInteger(monumentId) || monumentId <= 0
     );
-
     if (hasInvalidMonumentId) {
         return next(new HttpError("L'itinéraire contient des identifiants de monuments invalides.", 422));
     }
 
+    // Check for duplicates
     const seenIds = new Set();
     for (const monumentId of monumentIds) {
         if (seenIds.has(monumentId)) {
@@ -211,11 +211,11 @@ const modifierCircuit = async (req, res, next) => {
         seenIds.add(monumentId);
     }
 
+    // Check if circuit exists
     let circuits;
     try {
         circuits = await query('SELECT * FROM circuit WHERE id = ?', [id]);
-    } catch (error) {
-        console.error("DB error fetching circuit:", error);
+    } catch (err) {
         return next(new HttpError("Erreur lors de la récupération du circuit.", 500));
     }
 
@@ -223,11 +223,11 @@ const modifierCircuit = async (req, res, next) => {
         return next(new HttpError("Circuit non trouvé.", 404));
     }
 
+    // Validate monuments exist
     let monuments;
     try {
         monuments = await query('SELECT id FROM monument WHERE id IN (?)', [monumentIds]);
-    } catch (error) {
-        console.error("DB error validating monuments:", error);
+    } catch (err) {
         return next(new HttpError("Erreur lors de la validation des monuments.", 500));
     }
 
@@ -235,6 +235,7 @@ const modifierCircuit = async (req, res, next) => {
         return next(new HttpError("Un ou plusieurs monuments de l'itinéraire sont introuvables.", 404));
     }
 
+    // Use transaction for atomic update
     try {
         await query('START TRANSACTION');
 
@@ -245,17 +246,16 @@ const modifierCircuit = async (req, res, next) => {
 
         await query('DELETE FROM circuit_monument WHERE circuit_id = ?', [id]);
 
-        for (let index = 0; index < monumentIds.length; index++) {
+        for (let i = 0; i < monumentIds.length; i++) {
             await query(
                 'INSERT INTO circuit_monument (circuit_id, monument_id, ordre) VALUES (?, ?, ?)',
-                [id, monumentIds[index], index + 1]
+                [id, monumentIds[i], i + 1]
             );
         }
 
         await query('COMMIT');
-    } catch (error) {
+    } catch (err) {
         await query('ROLLBACK');
-        console.error("DB error updating circuit:", error);
         return next(new HttpError("Mise à jour du circuit échouée.", 500));
     }
 
@@ -270,6 +270,7 @@ const modifierCircuit = async (req, res, next) => {
         },
     });
 };
+
 
 
 
