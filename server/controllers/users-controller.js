@@ -39,7 +39,7 @@ const inscription = async (req, res, next) => {
         return next(new HttpError("Données saisies invalides.", 422));
     }
 
-    const { nom, prenom, dateNaissance, telephone, email, password } = req.body;
+    const { nom, prenom, telephone, email, password } = req.body;
 
     let existing;
     try {
@@ -54,8 +54,8 @@ const inscription = async (req, res, next) => {
 
     try {
         await query(
-            'INSERT INTO client (numTelephone, email, nomPrenom, dateNaissance, password) VALUES (?, ?, ?, ?, ?)',
-            [telephone, email, `${prenom} ${nom}`, dateNaissance || null, password]
+            'INSERT INTO client (numTelephone, email, nomPrenom, password) VALUES (?, ?, ?, ?)',
+            [telephone, email, `${prenom} ${nom}`, password]
         );
     } catch (error) {
         return next(new HttpError("Inscription échouée, veuillez réessayer.", 500));

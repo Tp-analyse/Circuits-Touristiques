@@ -24,17 +24,9 @@ const initDB = async () => {
             numTelephone VARCHAR(20) NOT NULL,
             email VARCHAR(100) NOT NULL UNIQUE,
             nomPrenom VARCHAR(100) NOT NULL,
-            dateNaissance DATE,
             password VARCHAR(100) NOT NULL
         )
     `);
-
-    // Migration: add dateNaissance if table already existed without it
-    try {
-        await query(`ALTER TABLE client ADD COLUMN dateNaissance DATE`);
-    } catch (e) {
-        // Column already exists — ignore
-    }
 
     await query(`
         CREATE TABLE IF NOT EXISTS monument (

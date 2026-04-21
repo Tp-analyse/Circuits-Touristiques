@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const EMPTY_FORM = {
     nom: "",
     prenom: "",
-    dateNaissance: "",
     telephone: "",
     courriel: "",
     motDePasse: "",
@@ -47,7 +46,6 @@ export default function InscriptionClient() {
         const {
             nom,
             prenom,
-            dateNaissance,
             telephone,
             courriel,
             motDePasse,
@@ -56,18 +54,11 @@ export default function InscriptionClient() {
         if (
             !nom.trim() ||
             !prenom.trim() ||
-            !dateNaissance ||
             !telephone.trim() ||
             !courriel.trim() ||
             !motDePasse
         ) {
             setMessage("Tous les champs sont obligatoires.");
-            return;
-        }
-
-        const year = new Date(dateNaissance).getFullYear();
-        if (year.toString().length !== 4) {
-            setMessage("La date de naissance doit contenir une année valide (4 chiffres).");
             return;
         }
 
@@ -92,7 +83,6 @@ export default function InscriptionClient() {
                     body: JSON.stringify({
                         nom,
                         prenom,
-                        dateNaissance,
                         telephone,
                         email: courriel,
                         password: motDePasse,
@@ -141,18 +131,6 @@ export default function InscriptionClient() {
                         type="text"
                         value={form.prenom}
                         onChange={handleChange}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="dateNaissance">Date de naissance</label>
-                    <input
-                        id="dateNaissance"
-                        name="dateNaissance"
-                        type="date"
-                        value={form.dateNaissance}
-                        onChange={handleChange}
-                        max={new Date().toISOString().split("T")[0]}
                     />
                 </div>
 
