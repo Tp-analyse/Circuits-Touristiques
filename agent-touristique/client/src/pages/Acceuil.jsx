@@ -110,16 +110,16 @@ export default function Acceuil() {
             {message && <p>{message}</p>}
 
             {monuments.length === 0 ? (
-                <p>Aucun monument trouve.</p>
+                <p>Aucun monument trouvé.</p>
             ) : (
                 <ul>
                     {monuments.map((monument) => (
                         <li key={monument.id} style={{ marginBottom: "20px" }}>
                             <h3>{monument.nom}</h3>
                             <p><strong>Date de construction :</strong> {monument.date_construction?.slice(0, 10)}</p>
-                            <p><strong>Resume historique :</strong> {monument.resume_histoire}</p>
+                            <p><strong>Resumé historique :</strong> {monument.resume_histoire}</p>
                             <p><strong>Prix :</strong> {monument.prix} $</p>
-                            <p><strong>Nombre d'etoiles :</strong> {monument.nb_etoiles}</p>
+                            <p><strong>Nombres d'étoiles :</strong> {monument.nb_etoiles}</p>
 
                             <div style={{ display: "flex", gap: "10px" }}>
                                 <Link to={`/monuments/${monument.id}/modifier`}>
@@ -143,7 +143,7 @@ export default function Acceuil() {
             <h2>Voici les circuits actuels :</h2>
 
             {circuits.length === 0 ? (
-                <p>Aucun circuit trouve.</p>
+                <p>Aucun circuit trouvé.</p>
             ) : (
                 <ul>
                     {circuits.map((circuit) => (
