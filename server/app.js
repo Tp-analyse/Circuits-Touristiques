@@ -24,11 +24,13 @@ app.use((req, res, next) => {
 
 app.use(errorHandler);
 
+const port = process.env.PORT || 3000;
+
 initDB()
     .then(() => populateDatabase())
     .then(() => {
-        app.listen(3000, () => {
-            console.log('Serveur écoute au: http://localhost:3000');
+        app.listen(port, () => {
+            console.log(`Serveur écoute au: http://localhost:${port}`);
         });
     })
     .catch((err) => {
