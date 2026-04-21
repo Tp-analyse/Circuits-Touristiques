@@ -86,6 +86,12 @@ export default function LoginForm() {
                 <button type="submit" className="btn-primary">
                     Se connecter
                 </button>
+                <button
+                    type="button"
+                    onClick={() => navigate("/inscriptionClient")}
+                >
+                    Créer un utilisateur
+                </button>
             </form>
         </section>
     );
