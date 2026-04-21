@@ -15,6 +15,10 @@
 	--success: #22c55e;
 	--radius: 6px;
 	--radius-lg: 22px;
+	/* aliases for web-client components */
+	--primary: var(--blue);
+	--primary-hover: var(--blue-hover);
+	--text-soft: var(--text-muted);
 }
 
 *,
@@ -27,7 +31,11 @@
 
 body {
 	background:
+		radial-gradient(ellipse at 20% 20%, rgba(37, 99, 235, 0.07) 0%, transparent 55%),
+		radial-gradient(ellipse at 80% 80%, rgba(34, 211, 238, 0.05) 0%, transparent 55%),
 		linear-gradient(180deg, #0b1220 0%, #0b1322 100%);
+	background-size: 200% 200%, 200% 200%, 100% 100%;
+	animation: gradientDrift 18s ease-in-out infinite;
 	color: var(--text);
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-size: 1rem;
@@ -44,6 +52,8 @@ a:hover {
 	color: var(--text);
 }
 
+/* ─── HEADER ─────────────────────────────────────────── */
+
 header {
 	display: flex;
 	align-items: center;
@@ -51,14 +61,36 @@ header {
 	padding: 0.75rem 2rem;
 	background-color: var(--surface);
 	border-bottom: 1px solid var(--border);
+	animation: slideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* client project header classes */
 .main-header a {
 	color: var(--text);
 	font-size: 1.25rem;
 	font-weight: 700;
 	letter-spacing: 0.02em;
 }
+
+/* web-client project header classes */
+.main-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.75rem 2rem;
+	background-color: var(--surface);
+	border-bottom: 1px solid var(--border);
+	animation: slideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.main-header-title a {
+	color: var(--text);
+	font-size: 1.25rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+/* ─── NAV ─────────────────────────────────────────────── */
 
 .nav-links {
 	display: flex;
@@ -70,6 +102,7 @@ header {
 	color: var(--text-muted);
 	font-size: 0.95rem;
 	transition: color 0.15s;
+	position: relative;
 }
 
 .nav-links a:hover,
@@ -77,11 +110,40 @@ header {
 	color: var(--blue-light);
 }
 
+.nav-links a::after {
+	content: '';
+	position: absolute;
+	bottom: -3px;
+	left: 0;
+	width: 0;
+	height: 2px;
+	background: var(--blue-light);
+	border-radius: 2px;
+	transition: width 0.22s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+	width: 100%;
+}
+
+/* ─── MAIN / PAGE CONTENT ────────────────────────────── */
+
 main {
 	max-width: 1180px;
 	margin: 3rem auto 4rem;
 	padding: 0 1rem;
+	animation: pageEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+.page-content {
+	max-width: 900px;
+	margin: 2.5rem auto;
+	padding: 0 1rem;
+	animation: pageEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── TYPOGRAPHY ─────────────────────────────────────── */
 
 h1 {
 	font-size: clamp(2rem, 4vw, 3.5rem);
@@ -95,6 +157,33 @@ h2 {
 	color: var(--text);
 }
 
+h3 {
+	margin-bottom: 0.75rem;
+	font-size: 1.1rem;
+}
+
+.subtitle {
+	color: var(--text-muted);
+	margin-bottom: 1.5rem;
+}
+
+/* ─── CARD ───────────────────────────────────────────── */
+
+.card {
+	background-color: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 2rem;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.auth-card {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+/* ─── FORMS ──────────────────────────────────────────── */
+
 form {
 	background-color: var(--surface);
 	border: 1px solid var(--border);
@@ -103,13 +192,40 @@ form {
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
+	animation: formEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-form>div {
+form > div {
 	display: flex;
 	flex-direction: column;
 	gap: 0.35rem;
 }
+
+/* web-client uses .form and .form-control classes */
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.form-control {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+form > div:nth-child(1),
+.form-control:nth-child(1) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both; }
+form > div:nth-child(2),
+.form-control:nth-child(2) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.10s both; }
+form > div:nth-child(3),
+.form-control:nth-child(3) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
+form > div:nth-child(4),
+.form-control:nth-child(4) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both; }
+form > div:nth-child(5),
+.form-control:nth-child(5) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both; }
+form > div:nth-child(6),
+.form-control:nth-child(6) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both; }
 
 label {
 	font-size: 0.875rem;
@@ -142,6 +258,17 @@ textarea {
 	min-height: 100px;
 }
 
+form > p {
+	font-size: 0.875rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: var(--radius);
+	background-color: var(--surface-2);
+	border-left: 3px solid var(--blue-light);
+	color: var(--text-muted);
+}
+
+/* ─── BUTTONS ────────────────────────────────────────── */
+
 button {
 	cursor: pointer;
 	border: none;
@@ -149,6 +276,25 @@ button {
 	font-size: 0.95rem;
 	padding: 0.5rem 1.25rem;
 	transition: background-color 0.15s, transform 0.12s, box-shadow 0.15s;
+	position: relative;
+	overflow: hidden;
+}
+
+button::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.08);
+	border-radius: inherit;
+	transform: scale(0);
+	opacity: 1;
+	transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+button:active::after {
+	transform: scale(2.2);
+	opacity: 0;
+	transition: 0s;
 }
 
 button:hover:not(:disabled) {
@@ -181,10 +327,68 @@ button[type="button"]:hover {
 	color: var(--text);
 }
 
+.btn-primary {
+	margin-top: 0.5rem;
+	padding: 0.9rem 1rem;
+	border: none;
+	border-radius: 8px;
+	background-color: var(--blue);
+	color: white;
+	font-size: 1rem;
+	cursor: pointer;
+	width: 100%;
+}
+
+.btn-primary:hover {
+	background-color: var(--blue-hover);
+}
+
 .form-actions {
 	display: flex;
 	gap: 0.75rem;
 }
+
+/* ─── MESSAGES ───────────────────────────────────────── */
+
+.message-erreur {
+	background-color: rgba(239, 68, 68, 0.12);
+	color: #fca5a5;
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	border-radius: 8px;
+	padding: 0.75rem 1rem;
+}
+
+.status-banner {
+	padding: 0.9rem 1rem;
+	border-radius: 999px;
+	border: 1px solid rgba(34, 197, 94, 0.25);
+	background: rgba(34, 197, 94, 0.12);
+	color: #b8f7c8;
+	animation: bannerPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── HOME GRID (web-client) ─────────────────────────── */
+
+.home-grid {
+	margin-top: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 1rem;
+}
+
+.info-box {
+	background-color: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 1rem;
+}
+
+.info-box p {
+	color: var(--text-muted);
+	line-height: 1.5;
+}
+
+/* ─── ITINERARY CONTROLS ─────────────────────────────── */
 
 .itineraire-controls {
 	display: flex;
@@ -196,7 +400,7 @@ button[type="button"]:hover {
 	flex: 1;
 }
 
-.itineraire-list-container>p {
+.itineraire-list-container > p {
 	font-size: 0.875rem;
 	color: var(--text-muted);
 }
@@ -241,14 +445,7 @@ button[type="button"]:hover {
 	cursor: not-allowed;
 }
 
-form>p {
-	font-size: 0.875rem;
-	padding: 0.5rem 0.75rem;
-	border-radius: var(--radius);
-	background-color: var(--surface-2);
-	border-left: 3px solid var(--blue-light);
-	color: var(--text-muted);
-}
+/* ─── ACCUEIL / CATALOG ──────────────────────────────── */
 
 .accueil-page {
 	display: flex;
@@ -260,21 +457,16 @@ form>p {
 	padding: 0;
 }
 
+.accueil-hero h1 {
+	animation: heroEntrance 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+}
+
 .section-kicker,
 .card-tag {
 	text-transform: uppercase;
 	letter-spacing: 0.18em;
 	font-size: 0.72rem;
 	color: var(--cyan);
-}
-
-.status-banner {
-	padding: 0.9rem 1rem;
-	border-radius: 999px;
-	border: 1px solid rgba(34, 197, 94, 0.25);
-	background: rgba(34, 197, 94, 0.12);
-	color: #b8f7c8;
-	animation: bannerPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .accueil-sections {
@@ -287,6 +479,14 @@ form>p {
 	border-radius: var(--radius-lg);
 	border: 1px solid rgba(148, 163, 184, 0.16);
 	background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(13, 19, 32, 0.96));
+}
+
+.catalog-section:nth-child(1) {
+	animation: sectionEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+.catalog-section:nth-child(2) {
+	animation: sectionEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
 }
 
 .catalog-section-header {
@@ -305,6 +505,16 @@ form>p {
 	color: var(--text);
 }
 
+.catalog-section-header input {
+	transition: width 0.28s ease, box-shadow 0.2s ease, border-color 0.15s;
+	width: 520px;
+}
+
+.catalog-section-header input:focus {
+	width: 660px;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
 .section-count {
 	min-width: 3rem;
 	padding: 0.45rem 0.75rem;
@@ -314,6 +524,7 @@ form>p {
 	color: var(--text);
 	text-align: center;
 	font-weight: 700;
+	animation: countPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
 }
 
 .empty-state,
@@ -321,22 +532,13 @@ form>p {
 	color: var(--text-muted);
 }
 
+/* ─── CATALOG GRID / CARDS ───────────────────────────── */
+
 .catalog-grid {
 	list-style: none;
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 	gap: 1rem;
-}
-
-@keyframes cardEntrance {
-	from {
-		opacity: 0;
-		transform: translateY(28px) scale(0.97);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
 }
 
 .catalog-card {
@@ -351,10 +553,24 @@ form>p {
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 	opacity: 0;
 	animation: cardEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) var(--card-delay, 0s) forwards;
+	transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+	            box-shadow 0.22s ease,
+	            border-color 0.22s ease;
+}
+
+.catalog-card:hover {
+	transform: translateY(-5px) scale(1.012);
+	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 }
 
 .monument-card {
 	border-color: rgba(34, 211, 238, 0.18);
+}
+
+.monument-card:hover {
+	border-color: rgba(34, 211, 238, 0.55);
+	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45),
+	            0 0 24px rgba(34, 211, 238, 0.12);
 }
 
 .circuit-card {
@@ -364,6 +580,12 @@ form>p {
 	max-width: 420px;
 	justify-self: start;
 	border-color: rgba(245, 158, 11, 0.22);
+}
+
+.circuit-card:hover {
+	border-color: rgba(245, 158, 11, 0.55);
+	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45),
+	            0 0 24px rgba(245, 158, 11, 0.12);
 }
 
 .catalog-card-header {
@@ -382,11 +604,7 @@ form>p {
 	font-size: 1.3rem;
 }
 
-.circuit-summary-row {
-	display: flex;
-	justify-content: flex-start;
-	margin-top: -0.15rem;
-}
+/* ─── PRICE PILL ─────────────────────────────────────── */
 
 .price-pill {
 	white-space: nowrap;
@@ -396,7 +614,22 @@ form>p {
 	border: 1px solid rgba(245, 158, 11, 0.25);
 	color: #ffd48a;
 	font-weight: 700;
+	animation: pillPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+	transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
+
+.catalog-card:hover .price-pill {
+	box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+	transform: scale(1.05);
+}
+
+.circuit-summary-row {
+	display: flex;
+	justify-content: flex-start;
+	margin-top: -0.15rem;
+}
+
+/* ─── DAY BADGE ──────────────────────────────────────── */
 
 .day-badge {
 	position: absolute;
@@ -415,6 +648,7 @@ form>p {
 	color: #ffe2a8;
 	text-transform: uppercase;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	animation: badgeSpin 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
 }
 
 .day-badge strong {
@@ -427,6 +661,8 @@ form>p {
 	letter-spacing: 0.16em;
 }
 
+/* ─── CATALOG DETAILS ────────────────────────────────── */
+
 .catalog-details {
 	display: grid;
 	gap: 0.9rem;
@@ -435,6 +671,32 @@ form>p {
 .compact-details {
 	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
+
+.catalog-details div {
+	padding: 0.85rem 0.9rem;
+	border-radius: 14px;
+	background: var(--surface-3);
+	border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.catalog-details div:nth-child(1) { animation: detailIn 0.3s ease 0.05s both; }
+.catalog-details div:nth-child(2) { animation: detailIn 0.3s ease 0.12s both; }
+.catalog-details div:nth-child(3) { animation: detailIn 0.3s ease 0.19s both; }
+.catalog-details div:nth-child(4) { animation: detailIn 0.3s ease 0.26s both; }
+
+.catalog-details dt {
+	margin-bottom: 0.35rem;
+	font-size: 0.78rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--text-muted);
+}
+
+.catalog-details dd {
+	color: var(--text);
+}
+
+/* ─── ROUTE STRIP ────────────────────────────────────── */
 
 .route-strip {
 	display: grid;
@@ -482,6 +744,7 @@ form>p {
 	width: 100%;
 	height: 2px;
 	background: linear-gradient(90deg, rgba(34, 211, 238, 0.65), rgba(245, 158, 11, 0.8));
+	animation: drawLine 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
 }
 
 .route-line span::after {
@@ -496,24 +759,7 @@ form>p {
 	transform: translateY(-50%) rotate(45deg);
 }
 
-.catalog-details div {
-	padding: 0.85rem 0.9rem;
-	border-radius: 14px;
-	background: var(--surface-3);
-	border: 1px solid rgba(148, 163, 184, 0.14);
-}
-
-.catalog-details dt {
-	margin-bottom: 0.35rem;
-	font-size: 0.78rem;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	color: var(--text-muted);
-}
-
-.catalog-details dd {
-	color: var(--text);
-}
+/* ─── ITINERARY BLOCK ────────────────────────────────── */
 
 .itinerary-block {
 	display: flex;
@@ -543,11 +789,20 @@ form>p {
 	background: rgba(37, 99, 235, 0.11);
 	border: 1px solid rgba(59, 130, 246, 0.25);
 	color: var(--text);
+	animation: cardEntrance 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+	transition: opacity 0.2s, transform 0.2s;
 }
 
 .itinerary-chip strong {
 	color: #cbe2ff;
 }
+
+.itinerary-chip.removing {
+	opacity: 0;
+	transform: scale(0.85);
+}
+
+/* ─── CATALOG ACTIONS ────────────────────────────────── */
 
 .catalog-actions {
 	display: flex;
@@ -564,8 +819,107 @@ form>p {
 	width: 100%;
 }
 
+.catalog-actions button:last-child:hover {
+	background-color: rgba(239, 68, 68, 0.18);
+	border-color: rgba(239, 68, 68, 0.5);
+	color: #fca5a5;
+	box-shadow: 0 4px 18px rgba(239, 68, 68, 0.18);
+}
+
+/* ─── CONFIRM DIALOG ─────────────────────────────────── */
+
+.confirm-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	backdrop-filter: blur(3px);
+}
+
+.confirm-dialog {
+	background: var(--surface);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 14px;
+	padding: 2rem 2.4rem;
+	max-width: 380px;
+	width: 90%;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	animation: confirmIn 0.18s ease;
+}
+
+.confirm-dialog p {
+	margin: 0 0 1.6rem;
+	font-size: 1rem;
+	color: var(--text);
+	text-align: center;
+}
+
+.confirm-actions {
+	display: flex;
+	gap: 0.8rem;
+	justify-content: flex-end;
+}
+
+.confirm-actions button {
+	padding: 0.5rem 1.2rem;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.07);
+	color: var(--text);
+	transition: background 0.15s, transform 0.1s;
+}
+
+.confirm-actions button:hover {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+.confirm-actions .confirm-danger {
+	background: rgba(239, 68, 68, 0.18);
+	border-color: rgba(239, 68, 68, 0.4);
+	color: #fca5a5;
+}
+
+.confirm-actions .confirm-danger:hover {
+	background: rgba(239, 68, 68, 0.35);
+}
+
+/* ─── SKELETON ───────────────────────────────────────── */
+
+.skeleton {
+	border-radius: 10px;
+	background: linear-gradient(
+		90deg,
+		rgba(30, 41, 59, 0.8) 25%,
+		rgba(51, 65, 85, 0.9) 50%,
+		rgba(30, 41, 59, 0.8) 75%
+	);
+	background-size: 600px 100%;
+	animation: shimmer 1.4s infinite linear;
+}
+
+.skeleton-card {
+	height: 220px;
+	border-radius: 18px;
+}
+
+.skeleton-line {
+	height: 14px;
+	margin-bottom: 0.6rem;
+}
+
+.skeleton-line.short { width: 55%; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+
 @media (max-width: 700px) {
-	header {
+	header,
+	.main-header-bar {
 		padding: 0.75rem 1rem;
 		gap: 1rem;
 		flex-direction: column;
@@ -577,7 +931,8 @@ form>p {
 		gap: 0.75rem 1rem;
 	}
 
-	main {
+	main,
+	.page-content {
 		margin-top: 1.5rem;
 	}
 
@@ -621,140 +976,71 @@ form>p {
 	.catalog-actions button {
 		width: 100%;
 	}
+
+	.catalog-section-header input {
+		width: 100%;
+	}
+
+	.catalog-section-header input:focus {
+		width: 100%;
+	}
 }
 
-/* ANIMATIONS */
+/* ─── ANIMATIONS ─────────────────────────────────────── */
+
+@keyframes gradientDrift {
+	0%   { background-position: 0% 0%, 0% 0%, 0% 0%; }
+	50%  { background-position: 100% 100%, 100% 100%, 0% 0%; }
+	100% { background-position: 0% 0%, 0% 0%, 0% 0%; }
+}
 
 @keyframes pageEntrance {
-	from {
-		opacity: 0;
-		transform: translateY(20px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-main {
-	animation: pageEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+	from { opacity: 0; transform: translateY(20px); }
+	to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideDown {
-	from {
-		opacity: 0;
-		transform: translateY(-100%);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-header {
-	animation: slideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.nav-links a {
-	position: relative;
-}
-
-.nav-links a::after {
-	content: '';
-	position: absolute;
-	bottom: -3px;
-	left: 0;
-	width: 0;
-	height: 2px;
-	background: var(--blue-light);
-	border-radius: 2px;
-	transition: width 0.22s ease;
-}
-
-.nav-links a:hover::after,
-.nav-links a.active::after {
-	width: 100%;
+	from { opacity: 0; transform: translateY(-100%); }
+	to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes heroEntrance {
-	from {
-		opacity: 0;
-		transform: translateY(14px);
-		letter-spacing: 0.1em;
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-		letter-spacing: normal;
-	}
-}
-
-.accueil-hero h1 {
-	animation: heroEntrance 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+	from { opacity: 0; transform: translateY(14px); letter-spacing: 0.1em; }
+	to   { opacity: 1; transform: translateY(0); letter-spacing: normal; }
 }
 
 @keyframes sectionEntrance {
-	from {
-		opacity: 0;
-		transform: translateY(22px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+	from { opacity: 0; transform: translateY(22px); }
+	to   { opacity: 1; transform: translateY(0); }
 }
 
-.catalog-section:nth-child(1) {
-	animation: sectionEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
-}
-
-.catalog-section:nth-child(2) {
-	animation: sectionEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
-}
-
-@keyframes pillPop {
-	0% {
-		opacity: 0;
-		transform: scale(0.6);
-	}
-	65% {
-		transform: scale(1.1);
-	}
-	100% {
-		opacity: 1;
-		transform: scale(1);
-	}
-}
-
-.price-pill {
-	animation: pillPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.itinerary-chip {
-	animation: cardEntrance 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes cardEntrance {
+	from { opacity: 0; transform: translateY(28px) scale(0.97); }
+	to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes formEntrance {
-	from {
-		opacity: 0;
-		transform: translateY(22px) scale(0.985);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
+	from { opacity: 0; transform: translateY(22px) scale(0.985); }
+	to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-form {
-	animation: formEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes pillPop {
+	0%   { opacity: 0; transform: scale(0.6); }
+	65%  { transform: scale(1.1); }
+	100% { opacity: 1; transform: scale(1); }
 }
 
-form > div:nth-child(1) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both; }
-form > div:nth-child(2) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.10s both; }
-form > div:nth-child(3) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
-form > div:nth-child(4) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both; }
-form > div:nth-child(5) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both; }
-form > div:nth-child(6) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both; }
+@keyframes badgeSpin {
+	from { opacity: 0; transform: rotate(-25deg) scale(0.6); }
+	65%  { transform: rotate(6deg) scale(1.08); }
+	to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+@keyframes countPop {
+	0%   { transform: scale(0.5); opacity: 0; }
+	60%  { transform: scale(1.2); }
+	100% { transform: scale(1); opacity: 1; }
+}
 
 @keyframes inputGlow {
 	from { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.45); }
@@ -762,186 +1048,8 @@ form > div:nth-child(6) { animation: formEntrance 0.4s cubic-bezier(0.22, 1, 0.3
 }
 
 @keyframes bannerPop {
-	from {
-		opacity: 0;
-		transform: translateY(-10px) scale(0.97);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
-}
-
-.catalog-card {
-	transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-	            box-shadow 0.22s ease,
-	            border-color 0.22s ease;
-}
-
-.catalog-card:hover {
-	transform: translateY(-5px) scale(1.012);
-	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-}
-
-.monument-card:hover {
-	border-color: rgba(34, 211, 238, 0.55);
-	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45),
-	            0 0 24px rgba(34, 211, 238, 0.12);
-}
-
-.circuit-card:hover {
-	border-color: rgba(245, 158, 11, 0.55);
-	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45),
-	            0 0 24px rgba(245, 158, 11, 0.12);
-}
-
-@keyframes shimmer {
-	from { background-position: -600px 0; }
-	to   { background-position:  600px 0; }
-}
-
-.skeleton {
-	border-radius: 10px;
-	background: linear-gradient(
-		90deg,
-		rgba(30, 41, 59, 0.8) 25%,
-		rgba(51, 65, 85, 0.9) 50%,
-		rgba(30, 41, 59, 0.8) 75%
-	);
-	background-size: 600px 100%;
-	animation: shimmer 1.4s infinite linear;
-}
-
-.skeleton-card {
-	height: 220px;
-	border-radius: 18px;
-}
-
-.skeleton-line {
-	height: 14px;
-	margin-bottom: 0.6rem;
-}
-
-.skeleton-line.short { width: 55%; }
-
-
-button {
-	position: relative;
-	overflow: hidden;
-}
-
-button::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: rgba(255, 255, 255, 0.08);
-	border-radius: inherit;
-	transform: scale(0);
-	opacity: 1;
-	transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-button:active::after {
-	transform: scale(2.2);
-	opacity: 0;
-	transition: 0s;
-}
-
-.catalog-actions button:last-child:hover {
-	background-color: rgba(239, 68, 68, 0.18);
-	border-color: rgba(239, 68, 68, 0.5);
-	color: #fca5a5;
-	box-shadow: 0 4px 18px rgba(239, 68, 68, 0.18);
-}
-
-@keyframes drawLine {
-	from { clip-path: inset(0 100% 0 0); }
-	to   { clip-path: inset(0 0% 0 0); }
-}
-
-.route-line span {
-	animation: drawLine 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
-}
-
-@keyframes badgeSpin {
-	from {
-		opacity: 0;
-		transform: rotate(-25deg) scale(0.6);
-	}
-	65% {
-		transform: rotate(6deg) scale(1.08);
-	}
-	to {
-		opacity: 1;
-		transform: rotate(0deg) scale(1);
-	}
-}
-
-.day-badge {
-	animation: badgeSpin 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
-}
-
-@keyframes countPop {
-	0%   { transform: scale(0.5); opacity: 0; }
-	60%  { transform: scale(1.2); }
-	100% { transform: scale(1);   opacity: 1; }
-}
-
-.section-count {
-	animation: countPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
-}
-
-.catalog-section-header input {
-	transition: width 0.28s ease, box-shadow 0.2s ease, border-color 0.15s;
-	width: 520px;
-}
-
-.catalog-section-header input:focus {
-	width: 660px;
-	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-@keyframes detailIn {
-	from { opacity: 0; transform: translateX(-8px); }
-	to   { opacity: 1; transform: translateX(0); }
-}
-
-.catalog-details div:nth-child(1) { animation: detailIn 0.3s ease 0.05s both; }
-.catalog-details div:nth-child(2) { animation: detailIn 0.3s ease 0.12s both; }
-.catalog-details div:nth-child(3) { animation: detailIn 0.3s ease 0.19s both; }
-.catalog-details div:nth-child(4) { animation: detailIn 0.3s ease 0.26s both; }
-
-@keyframes gradientDrift {
-	0%   { background-position: 0% 0%; }
-	50%  { background-position: 100% 100%; }
-	100% { background-position: 0% 0%; }
-}
-
-body {
-	background:
-		radial-gradient(ellipse at 20% 20%, rgba(37, 99, 235, 0.07) 0%, transparent 55%),
-		radial-gradient(ellipse at 80% 80%, rgba(34, 211, 238, 0.05) 0%, transparent 55%),
-		linear-gradient(180deg, #0b1220 0%, #0b1322 100%);
-	background-size: 200% 200%, 200% 200%, 100% 100%;
-	animation: gradientDrift 18s ease-in-out infinite;
-}
-
-.price-pill {
-	transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
-}
-
-.catalog-card:hover .price-pill {
-	box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
-	transform: scale(1.05);
-}
-
-.itinerary-chip {
-	transition: opacity 0.2s, transform 0.2s;
-}
-
-.itinerary-chip.removing {
-	opacity: 0;
-	transform: scale(0.85);
+	from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+	to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes confirmIn {
@@ -949,63 +1057,17 @@ body {
 	to   { opacity: 1; transform: scale(1); }
 }
 
-.confirm-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.55);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 1000;
-	backdrop-filter: blur(3px);
+@keyframes drawLine {
+	from { clip-path: inset(0 100% 0 0); }
+	to   { clip-path: inset(0 0% 0 0); }
 }
 
-.confirm-dialog {
-	background: var(--surface, #1e2a3a);
-	border: 1px solid rgba(255,255,255,0.1);
-	border-radius: 14px;
-	padding: 2rem 2.4rem;
-	max-width: 380px;
-	width: 90%;
-	box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-	animation: confirmIn 0.18s ease;
+@keyframes detailIn {
+	from { opacity: 0; transform: translateX(-8px); }
+	to   { opacity: 1; transform: translateX(0); }
 }
 
-.confirm-dialog p {
-	margin: 0 0 1.6rem;
-	font-size: 1rem;
-	color: var(--text, #e2e8f0);
-	text-align: center;
-}
-
-.confirm-actions {
-	display: flex;
-	gap: 0.8rem;
-	justify-content: flex-end;
-}
-
-.confirm-actions button {
-	padding: 0.5rem 1.2rem;
-	border-radius: 8px;
-	font-size: 0.9rem;
-	font-weight: 600;
-	cursor: pointer;
-	border: 1px solid rgba(255,255,255,0.12);
-	background: rgba(255,255,255,0.07);
-	color: var(--text, #e2e8f0);
-	transition: background 0.15s, transform 0.1s;
-}
-
-.confirm-actions button:hover {
-	background: rgba(255,255,255,0.14);
-}
-
-.confirm-actions .confirm-danger {
-	background: rgba(239, 68, 68, 0.18);
-	border-color: rgba(239, 68, 68, 0.4);
-	color: #fca5a5;
-}
-
-.confirm-actions .confirm-danger:hover {
-	background: rgba(239, 68, 68, 0.35);
+@keyframes shimmer {
+	from { background-position: -600px 0; }
+	to   { background-position:  600px 0; }
 }
