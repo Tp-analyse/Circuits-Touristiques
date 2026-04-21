@@ -6,6 +6,7 @@ import LoginForm from "./pages/loginForm/LoginForm";
 import HomePage from "./pages/homepage/HomePage";
 import Logout from "./pages/logout/Logout";
 import { AuthContext } from "./context/auth-context";
+import InscriptionClient from "./pages/inscription/InscriptionClient";
 
 const routerNotLoggedIn = createBrowserRouter([
     {
@@ -28,6 +29,7 @@ const routerLoggedIn = createBrowserRouter([
             { path: "/", element: <Navigate to="/accueil" /> },
             { path: "/login", element: <Navigate to="/accueil" /> },
             { path: "/accueil", element: <HomePage /> },
+            { path: "inscriptionClient", element: <InscriptionClient /> },
             { path: "/deconnexion", element: <Logout /> }
         ]
     }
