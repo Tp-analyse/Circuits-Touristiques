@@ -6,7 +6,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently --kill-others \"vite\" \"wait-on http://localhost:8080 && electron .\"",
-    "start": "electron .",
+    "start": "concurrently --kill-others \"vite\" \"wait-on http://localhost:8080 && electron .\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
