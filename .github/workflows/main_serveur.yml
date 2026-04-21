@@ -25,11 +25,11 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          cd ./client
+          cd ./server
           npm install
           npm run build --if-present
           npm run test --if-present
-          cd ../../server
+          cd ../../client
           npm install
           npm run build --if-present
           npm run test --if-present
