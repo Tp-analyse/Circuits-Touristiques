@@ -9,7 +9,6 @@ export default function MainNavigation() {
                 <h1 className="main-header">
                     <Link to="/">Agence Touristique</Link>
                 </h1>
-                
                 <nav className="main-nav">
                     <NavLinks />
                 </nav>
