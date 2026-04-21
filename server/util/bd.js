@@ -17,13 +17,9 @@ const query = (sql, params = []) => {
 };
 
 const initDB = async () => {
-    await query('DROP TABLE IF EXISTS circuit_monument');
-    await query('DROP TABLE IF EXISTS circuit');
-    await query('DROP TABLE IF EXISTS monument');
-    await query('DROP TABLE IF EXISTS client');
 
     await query(`
-        CREATE TABLE client (
+        CREATE TABLE IF NOT EXISTS client (
             clientId INT AUTO_INCREMENT PRIMARY KEY,
             numTelephone VARCHAR(20) NOT NULL,
             email VARCHAR(100) NOT NULL UNIQUE,
@@ -33,7 +29,7 @@ const initDB = async () => {
     `);
 
     await query(`
-        CREATE TABLE monument (
+        CREATE TABLE IF NOT EXISTS monument (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nom VARCHAR(100) NOT NULL,
             date_construction DATE NOT NULL,
@@ -44,7 +40,7 @@ const initDB = async () => {
     `);
 
     await query(`
-        CREATE TABLE circuit (
+        CREATE TABLE IF NOT EXISTS circuit (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nom VARCHAR(100) NOT NULL,
             nbjours INT NOT NULL,
@@ -54,7 +50,7 @@ const initDB = async () => {
     `);
 
     await query(`
-        CREATE TABLE circuit_monument (
+        CREATE TABLE IF NOT EXISTS circuit_monument (
             circuit_id INT NOT NULL,
             monument_id INT NOT NULL,
             ordre INT NOT NULL,
@@ -71,6 +67,7 @@ const initDB = async () => {
 
     console.log('Tables MySQL initialisées');
 };
+
 
 const populateDatabase = async () => {
     // Insert clients if none exist
