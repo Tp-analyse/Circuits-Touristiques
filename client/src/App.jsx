@@ -10,6 +10,7 @@ import ModifierMonument from "./pages/ModifierMonument";
 import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
 import Acceuil from "./pages/Acceuil";
+import InscriptionClient from "../../web-client/client/src/pages/inscription/InscriptionClient";
 
 function getExpirationToken(token) {
     try {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <Navigate to="/login" /> },
             { path: "login", element: <LoginForm /> },
+            { path: "inscriptionClient", element: <InscriptionClient /> },
             { path: "deconnexion", element: <Navigate to="/login" /> },
         ],
     },
