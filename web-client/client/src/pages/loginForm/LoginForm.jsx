@@ -26,7 +26,7 @@ export default function LoginForm() {
         });
     }
 
-    function soumettreFormulaire(e) {
+    async function soumettreFormulaire(e) {
         e.preventDefault();
 
         const courriel = formulaire.courriel.trim();
@@ -43,8 +43,27 @@ export default function LoginForm() {
         }
 
         setMessageErreur("");
-        auth.login();
-        navigate("/accueil");
+
+        try {
+            const response = await fetch("http://localhost:3000/api/users/connexion", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: courriel, password: motDePasse })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setMessageErreur(data.message || "Connexion échouée.");
+                return;
+            }
+
+            localStorage.setItem("token", data.token);
+            auth.login();
+            navigate("/accueil");
+        } catch (error) {
+            setMessageErreur("Connexion échouée. Vérifiez votre connexion.");
+        }
     }
 
     return (

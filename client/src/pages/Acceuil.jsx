@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 
 function formatPrice(value) {
@@ -34,12 +35,28 @@ function MaquetteGrille({ count = 3 }) {
 	);
 }
 
+function ConfirmDialog({ message, onConfirm, onCancel }) {
+	return createPortal(
+		<div className="confirm-overlay" onClick={onCancel}>
+			<div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
+				<p>{message}</p>
+				<div className="confirm-actions">
+					<button type="button" onClick={onCancel}>Annuler</button>
+					<button type="button" className="confirm-danger" onClick={onConfirm}>Supprimer</button>
+				</div>
+			</div>
+		</div>,
+		document.body
+	);
+}
+
 export default function Acceuil() {
 	const [monuments, setMonuments] = useState([]);
 	const [circuits, setCircuits] = useState([]);
 	const [message, setMessage] = useState("");
 	const [recherche, setRecherche] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	const [confirm, setConfirm] = useState(null);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -70,74 +87,46 @@ export default function Acceuil() {
 		fetchData();
 	}, []);
 
-	async function supprimerMonument(id) {
-		const confirmation = window.confirm("Voulez-vous vraiment supprimer ce monument ?");
-
-		if (!confirmation) {
-			return;
-		}
-
-		const token = window.localStorage.getItem("token");
-		const headers = {};
-
-		if (token) {
-			headers.Authorization = token;
-		}
-
-		try {
-			const response = await fetch(`http://localhost:3000/api/monuments/${id}`, {
-				method: "DELETE",
-				headers,
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				throw new Error(data.message || "La suppression du monument a echoue.");
-			}
-
-			setMonuments((prevMonuments) =>
-				prevMonuments.filter((monument) => monument.id !== id)
-			);
-			setMessage("Monument supprime avec succes.");
-		} catch (error) {
-			setMessage(error.message || "La suppression du monument a echoue.");
-		}
+	function demanderSuppressionMonument(id) {
+		setConfirm({
+			message: "Voulez-vous vraiment supprimer ce monument ?",
+			onConfirm: async () => {
+				setConfirm(null);
+				const token = window.localStorage.getItem("token");
+				const headers = {};
+				if (token) headers.Authorization = token;
+				try {
+					const response = await fetch(`http://localhost:3000/api/monuments/${id}`, { method: "DELETE", headers });
+					const data = await response.json();
+					if (!response.ok) throw new Error(data.message || "La suppression du monument a echoue.");
+					setMonuments((prev) => prev.filter((m) => m.id !== id));
+					setMessage("Monument supprime avec succes.");
+				} catch (error) {
+					setMessage(error.message || "La suppression du monument a echoue.");
+				}
+			},
+		});
 	}
 
-	async function supprimerCircuit(id) {
-		const confirmation = window.confirm("Voulez-vous vraiment supprimer ce circuit ?");
-
-		if (!confirmation) {
-			return;
-		}
-
-		const token = window.localStorage.getItem("token");
-		const headers = {};
-
-		if (token) {
-			headers.Authorization = token;
-		}
-
-		try {
-			const response = await fetch(`http://localhost:3000/api/circuits/${id}`, {
-				method: "DELETE",
-				headers,
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				throw new Error(data.message || "La suppression du circuit a echoue.");
-			}
-
-			setCircuits((prevCircuits) =>
-				prevCircuits.filter((circuit) => circuit.id !== id)
-			);
-			setMessage("Circuit supprime avec succes.");
-		} catch (error) {
-			setMessage(error.message || "La suppression du circuit a echoue.");
-		}
+	function demanderSuppressionCircuit(id) {
+		setConfirm({
+			message: "Voulez-vous vraiment supprimer ce circuit ?",
+			onConfirm: async () => {
+				setConfirm(null);
+				const token = window.localStorage.getItem("token");
+				const headers = {};
+				if (token) headers.Authorization = token;
+				try {
+					const response = await fetch(`http://localhost:3000/api/circuits/${id}`, { method: "DELETE", headers });
+					const data = await response.json();
+					if (!response.ok) throw new Error(data.message || "La suppression du circuit a echoue.");
+					setCircuits((prev) => prev.filter((c) => c.id !== id));
+					setMessage("Circuit supprime avec succes.");
+				} catch (error) {
+					setMessage(error.message || "La suppression du circuit a echoue.");
+				}
+			},
+		});
 	}
 
 	const monumentsFiltres = monuments.filter((monument) =>
@@ -146,6 +135,7 @@ export default function Acceuil() {
 
 	return (
 		<div className="accueil-page">
+			{confirm && <ConfirmDialog message={confirm.message} onConfirm={confirm.onConfirm} onCancel={() => setConfirm(null)} />}
 			<section className="accueil-hero">
 				<h1>Monuments et circuits disponibles</h1>
 			</section>
@@ -203,7 +193,7 @@ export default function Acceuil() {
 
 										<button
 											type="button"
-											onClick={() => supprimerMonument(monument.id)}
+											onClick={() => demanderSuppressionMonument(monument.id)}
 										>
 											Supprimer
 										</button>
@@ -281,7 +271,7 @@ export default function Acceuil() {
 
 										<button
 											type="button"
-											onClick={() => supprimerCircuit(circuit.id)}
+											onClick={() => demanderSuppressionCircuit(circuit.id)}
 										>
 											Supprimer
 										</button>

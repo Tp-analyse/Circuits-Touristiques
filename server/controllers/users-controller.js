@@ -19,20 +19,49 @@ const connexion = async (req, res, next) => {
     }
 
     const client = clients[0];
-    const authenticatedUser = client && client.password === password
-        ? client
-        : {
-            clientId: client?.clientId || 0,
-            email,
-        };
+
+    if (!client || client.password !== password) {
+        return next(new HttpError("Email ou mot de passe incorrect.", 401));
+    }
 
     const token = jwt.sign(
-        { userId: authenticatedUser.clientId, email: authenticatedUser.email },
+        { userId: client.clientId, email: client.email },
         'SECRET',
         { expiresIn: '1h' }
     );
 
-    res.status(200).json({ userId: authenticatedUser.clientId, token });
+    res.status(200).json({ userId: client.clientId, token });
 };
 
-module.exports = { connexion };
+const inscription = async (req, res, next) => {
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+        return next(new HttpError("Données saisies invalides.", 422));
+    }
+
+    const { nom, prenom, dateNaissance, telephone, email, password } = req.body;
+
+    let existing;
+    try {
+        existing = await query('SELECT clientId FROM client WHERE email = ?', [email]);
+    } catch (error) {
+        return next(new HttpError("Inscription échouée, veuillez réessayer.", 500));
+    }
+
+    if (existing.length > 0) {
+        return next(new HttpError("Cet email est déjà utilisé.", 422));
+    }
+
+    try {
+        await query(
+            'INSERT INTO client (numTelephone, email, nomPrenom, dateNaissance, password) VALUES (?, ?, ?, ?, ?)',
+            [telephone, email, `${prenom} ${nom}`, dateNaissance || null, password]
+        );
+    } catch (error) {
+        return next(new HttpError("Inscription échouée, veuillez réessayer.", 500));
+    }
+
+    res.status(201).json({ message: "Compte créé avec succès." });
+};
+
+module.exports = { connexion, inscription };

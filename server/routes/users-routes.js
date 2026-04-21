@@ -9,4 +9,12 @@ router.post('/connexion', [
     check('password').not().isEmpty()
 ], usersController.connexion);
 
+router.post('/inscription', [
+    check('nom').not().isEmpty(),
+    check('prenom').not().isEmpty(),
+    check('email').isEmail(),
+    check('password').not().isEmpty(),
+    check('telephone').not().isEmpty()
+], usersController.inscription);
+
 module.exports = router;
