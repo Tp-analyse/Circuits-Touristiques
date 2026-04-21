@@ -81,12 +81,6 @@ export default function LoginForm() {
                 {message && <p>{message}</p>}
 
                 <button type="submit">Se connecter</button>
-                <button
-                    type="button"
-                    onClick={() => navigate("/inscriptionClient")}
-                >
-                    Créer un utilisateur
-                </button>
             </form>
         </div>
     );
