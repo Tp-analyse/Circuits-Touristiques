@@ -53,6 +53,11 @@ describe("Acceuil", () => {
 							nbjours: 2,
 							ville_depart: "Paris",
 							ville_arrivee: "Paris",
+							itineraire: [
+								{ id: 1, nom: "Tour Eiffel", prix: 25 },
+								{ id: 2, nom: "Louvre", prix: 19.5 },
+							],
+							total_prix: 44.5,
 						},
 					],
 				}),
@@ -60,7 +65,7 @@ describe("Acceuil", () => {
 	}
 
 	function getItemActions(name) {
-		const item = screen.getByText(name).closest("li");
+		const item = screen.getByRole("heading", { name }).closest("li");
 
 		expect(item).not.toBeNull();
 
@@ -76,8 +81,12 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		expect(screen.getByText("Voici les monuments actuels :")).toBeInTheDocument();
-		expect(await screen.findByText("Tour Eiffel")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 1, name: /monuments et circuits disponibles/i })).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 2, name: "Monuments" })).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 2, name: "Circuits" })).toBeInTheDocument();
+		expect(await screen.findByRole("heading", { name: "Tour Eiffel" })).toBeInTheDocument();
+		expect(screen.getByText(/Total:\s*44\.50 \$/)).toBeInTheDocument();
+		expect(screen.getByText(/2\.\s*Louvre/)).toBeInTheDocument();
 	});
 
 	it("supprime un monument apres confirmation", async () => {
@@ -95,7 +104,7 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		await screen.findByText("Tour Eiffel");
+		await screen.findByRole("heading", { name: "Tour Eiffel" });
 		fireEvent.click(getItemActions("Tour Eiffel").getByRole("button", { name: /supprimer/i }));
 
 		await waitFor(() => {
@@ -108,7 +117,7 @@ describe("Acceuil", () => {
 		});
 
 		expect(await screen.findByText("Monument supprime avec succes.")).toBeInTheDocument();
-		expect(screen.queryByText("Tour Eiffel")).not.toBeInTheDocument();
+		expect(screen.queryByRole("heading", { name: "Tour Eiffel" })).not.toBeInTheDocument();
 	});
 
 	it("n envoie pas la requete de suppression si l utilisateur annule", async () => {
@@ -121,11 +130,11 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		await screen.findByText("Tour Eiffel");
+		await screen.findByRole("heading", { name: "Tour Eiffel" });
 		fireEvent.click(getItemActions("Tour Eiffel").getByRole("button", { name: /supprimer/i }));
 
 		expect(fetch).toHaveBeenCalledTimes(2);
-		expect(screen.getByText("Tour Eiffel")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { name: "Tour Eiffel" })).toBeInTheDocument();
 	});
 
 	it("affiche le message du backend si la suppression du monument echoue", async () => {
@@ -143,11 +152,11 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		await screen.findByText("Tour Eiffel");
+		await screen.findByRole("heading", { name: "Tour Eiffel" });
 		fireEvent.click(getItemActions("Tour Eiffel").getByRole("button", { name: /supprimer/i }));
 
 		expect(await screen.findByText("Suppression impossible.")).toBeInTheDocument();
-		expect(screen.getByText("Tour Eiffel")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { name: "Tour Eiffel" })).toBeInTheDocument();
 	});
 
 	it("supprime un circuit apres confirmation", async () => {
@@ -165,7 +174,7 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		await screen.findByText("Circuit de Paris");
+		await screen.findByRole("heading", { name: "Circuit de Paris" });
 		fireEvent.click(getItemActions("Circuit de Paris").getByRole("button", { name: /supprimer/i }));
 
 		await waitFor(() => {
@@ -178,7 +187,7 @@ describe("Acceuil", () => {
 		});
 
 		expect(await screen.findByText("Circuit supprime avec succes.")).toBeInTheDocument();
-		expect(screen.queryByText("Circuit de Paris")).not.toBeInTheDocument();
+		expect(screen.queryByRole("heading", { name: "Circuit de Paris" })).not.toBeInTheDocument();
 	});
 
 	it("n envoie pas la requete de suppression du circuit si l utilisateur annule", async () => {
@@ -191,11 +200,11 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		await screen.findByText("Circuit de Paris");
+		await screen.findByRole("heading", { name: "Circuit de Paris" });
 		fireEvent.click(getItemActions("Circuit de Paris").getByRole("button", { name: /supprimer/i }));
 
 		expect(fetch).toHaveBeenCalledTimes(2);
-		expect(screen.getByText("Circuit de Paris")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { name: "Circuit de Paris" })).toBeInTheDocument();
 	});
 
 	it("affiche le message du backend si la suppression du circuit echoue", async () => {
@@ -213,10 +222,10 @@ describe("Acceuil", () => {
 			</MemoryRouter>
 		);
 
-		await screen.findByText("Circuit de Paris");
+		await screen.findByRole("heading", { name: "Circuit de Paris" });
 		fireEvent.click(getItemActions("Circuit de Paris").getByRole("button", { name: /supprimer/i }));
 
 		expect(await screen.findByText("Suppression du circuit impossible.")).toBeInTheDocument();
-		expect(screen.getByText("Circuit de Paris")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { name: "Circuit de Paris" })).toBeInTheDocument();
 	});
 });
