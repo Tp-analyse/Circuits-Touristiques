@@ -1,6 +1,29 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+function formatPrice(value) {
+    return `${Number(value || 0).toFixed(2)} $`;
+}
+
+function formatDate(value) {
+    return value ? value.slice(0, 10) : "Date inconnue";
+}
+
+function getCircuitTotal(circuit) {
+    if (typeof circuit.total_prix === "number") {
+        return circuit.total_prix;
+    }
+
+    if (!Array.isArray(circuit.itineraire)) {
+        return 0;
+    }
+
+    return circuit.itineraire.reduce(
+        (total, monument) => total + Number(monument.prix || 0),
+        0
+    );
+}
+
 export default function Acceuil() {
     const [monuments, setMonuments] = useState([]);
     const [circuits, setCircuits] = useState([]);
@@ -104,71 +127,145 @@ export default function Acceuil() {
     }
 
     return (
-        <div>
-            <h2>Voici les monuments actuels :</h2>
+        <div className="accueil-page">
+            <section className="accueil-hero">
+                <h1>Monuments et circuits disponibles</h1>
+            </section>
 
-            {message && <p>{message}</p>}
+            {message && <p className="status-banner">{message}</p>}
 
-            {monuments.length === 0 ? (
-                <p>Aucun monument trouvé.</p>
-            ) : (
-                <ul>
-                    {monuments.map((monument) => (
-                        <li key={monument.id} style={{ marginBottom: "20px" }}>
-                            <h3>{monument.nom}</h3>
-                            <p><strong>Date de construction :</strong> {monument.date_construction?.slice(0, 10)}</p>
-                            <p><strong>Resumé historique :</strong> {monument.resume_histoire}</p>
-                            <p><strong>Prix :</strong> {monument.prix} $</p>
-                            <p><strong>Nombres d'étoiles :</strong> {monument.nb_etoiles}</p>
+            <div className="accueil-sections">
+                <section className="catalog-section">
+                    <div className="catalog-section-header">
+                        <h2 className="section-kicker">Monuments</h2>
+                        <span className="section-count">{monuments.length}</span>
+                    </div>
 
-                            <div style={{ display: "flex", gap: "10px" }}>
-                                <Link to={`/monuments/${monument.id}/modifier`}>
-                                    <button type="button">Modifier</button>
-                                </Link>
+                    {monuments.length === 0 ? (
+                        <p className="empty-state">Aucun monument trouve.</p>
+                    ) : (
+                        <ul className="catalog-grid">
+                            {monuments.map((monument) => (
+                                <li key={monument.id} className="catalog-card monument-card">
+                                    <div className="catalog-card-header">
+                                        <div>
+                                            <p className="card-tag">Monument</p>
+                                            <h3>{monument.nom}</h3>
+                                        </div>
+                                        <div className="price-pill">{formatPrice(monument.prix)}</div>
+                                    </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() => supprimerMonument(monument.id)}
-                                >
-                                    Supprimer
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                                    <dl className="catalog-details">
+                                        <div>
+                                            <dt>Date de construction</dt>
+                                            <dd>{formatDate(monument.date_construction)}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>Resume historique</dt>
+                                            <dd>{monument.resume_histoire}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>Nombre d etoiles</dt>
+                                            <dd>{monument.nb_etoiles}</dd>
+                                        </div>
+                                    </dl>
 
-            <hr />
+                                    <div className="catalog-actions">
+                                        <Link to={`/monuments/${monument.id}/modifier`}>
+                                            <button type="button">Modifier</button>
+                                        </Link>
 
-            <h2>Voici les circuits actuels :</h2>
+                                        <button
+                                            type="button"
+                                            onClick={() => supprimerMonument(monument.id)}
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
 
-            {circuits.length === 0 ? (
-                <p>Aucun circuit trouvé.</p>
-            ) : (
-                <ul>
-                    {circuits.map((circuit) => (
-                        <li key={circuit.id} style={{ marginBottom: "20px" }}>
-                            <h3>{circuit.nom}</h3>
-                            <p><strong>Nombre de jours :</strong> {circuit.nbjours}</p>
-                            <p><strong>Ville de depart :</strong> {circuit.ville_depart}</p>
-                            <p><strong>Ville d arrivee :</strong> {circuit.ville_arrivee}</p>
+                <section className="catalog-section">
+                    <div className="catalog-section-header">
+                        <h2 className="section-kicker">Circuits</h2>
+                        <span className="section-count">{circuits.length}</span>
+                    </div>
 
-                            <div style={{ display: "flex", gap: "10px" }}>
-                                <Link to={`/circuits/${circuit.id}/modifier`}>
-                                    <button type="button">Modifier</button>
-                                </Link>
+                    {circuits.length === 0 ? (
+                        <p className="empty-state">Aucun circuit trouve.</p>
+                    ) : (
+                        <ul className="catalog-grid">
+                            {circuits.map((circuit) => (
+                                <li key={circuit.id} className="catalog-card circuit-card">
+                                    <div className="day-badge" aria-label={`${circuit.nbjours} jours`}>
+                                        <strong>{circuit.nbjours}</strong>
+                                        <span>jours</span>
+                                    </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() => supprimerCircuit(circuit.id)}
-                                >
-                                    Supprimer
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                                    <div className="catalog-card-header">
+                                        <div>
+                                            <p className="card-tag">Circuit</p>
+                                            <h3>{circuit.nom}</h3>
+                                        </div>
+                                    </div>
+
+                                    <div className="circuit-summary-row">
+                                        <div className="price-pill">Total: {formatPrice(getCircuitTotal(circuit))}</div>
+                                    </div>
+
+                                    <div className="route-strip" aria-label="Trajet du circuit">
+                                        <div className="route-stop">
+                                            <span className="route-label">Depart</span>
+                                            <strong>{circuit.ville_depart}</strong>
+                                        </div>
+
+                                        <div className="route-line" aria-hidden="true">
+                                            <span></span>
+                                        </div>
+
+                                        <div className="route-stop route-stop-end">
+                                            <span className="route-label">Arrivee</span>
+                                            <strong>{circuit.ville_arrivee}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div className="itinerary-block">
+                                        <p className="itinerary-title">Monuments inclus</p>
+                                        {Array.isArray(circuit.itineraire) && circuit.itineraire.length > 0 ? (
+                                            <ul className="itinerary-chip-list">
+                                                {circuit.itineraire.map((monument, index) => (
+                                                    <li key={`${circuit.id}-${monument.id}`} className="itinerary-chip">
+                                                        <span>{index + 1}. {monument.nom}</span>
+                                                        <strong>{formatPrice(monument.prix)}</strong>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="empty-inline">Aucun monument dans cet itineraire.</p>
+                                        )}
+                                    </div>
+
+                                    <div className="catalog-actions">
+                                        <Link to={`/circuits/${circuit.id}/modifier`}>
+                                            <button type="button">Modifier</button>
+                                        </Link>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => supprimerCircuit(circuit.id)}
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
+            </div>
         </div>
     );
 }

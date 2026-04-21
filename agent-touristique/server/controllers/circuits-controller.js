@@ -11,7 +11,56 @@ const getAllCircuits = async (req, res, next) => {
         return next(new HttpError("Erreur lors de la récupération des circuits.", 500));
     }
 
-    res.json({ circuits });
+    if (circuits.length === 0) {
+        res.json({ circuits: [] });
+        return;
+    }
+
+    let circuitMonuments;
+
+    try {
+        circuitMonuments = await query(
+            `SELECT circuit_monument.circuit_id, circuit_monument.ordre, monument.id, monument.nom, monument.prix
+             FROM circuit_monument
+             INNER JOIN monument ON monument.id = circuit_monument.monument_id
+             WHERE circuit_monument.circuit_id IN (?)
+             ORDER BY circuit_monument.circuit_id ASC, circuit_monument.ordre ASC`,
+            [circuits.map((circuit) => circuit.id)]
+        );
+    } catch (error) {
+        return next(new HttpError("Erreur lors de la récupération de l'itinéraire des circuits.", 500));
+    }
+
+    const monumentsByCircuitId = new Map();
+
+    circuitMonuments.forEach((monument) => {
+        const currentMonuments = monumentsByCircuitId.get(monument.circuit_id) || [];
+
+        currentMonuments.push({
+            id: monument.id,
+            nom: monument.nom,
+            prix: Number(monument.prix),
+            ordre: monument.ordre,
+        });
+
+        monumentsByCircuitId.set(monument.circuit_id, currentMonuments);
+    });
+
+    res.json({
+        circuits: circuits.map((circuit) => {
+            const itineraire = monumentsByCircuitId.get(circuit.id) || [];
+            const total_prix = itineraire.reduce(
+                (total, monument) => total + Number(monument.prix || 0),
+                0
+            );
+
+            return {
+                ...circuit,
+                itineraire,
+                total_prix,
+            };
+        }),
+    });
 };
 
 const getCircuitById = async (req, res, next) => {
