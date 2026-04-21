@@ -24,11 +24,22 @@ function getCircuitTotal(circuit) {
 	);
 }
 
+function MaquetteGrille({ count = 3 }) {
+	return (
+		<ul className="catalog-grid">
+			{Array.from({ length: count }).map((_, i) => (
+				<li key={i} className="catalog-card skeleton-card skeleton" />
+			))}
+		</ul>
+	);
+}
+
 export default function Acceuil() {
 	const [monuments, setMonuments] = useState([]);
 	const [circuits, setCircuits] = useState([]);
 	const [message, setMessage] = useState("");
 	const [recherche, setRecherche] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -51,6 +62,8 @@ export default function Acceuil() {
 				setCircuits(dataCircuits.circuits || []);
 			} catch (error) {
 				setMessage(error.message || "Impossible de charger les donnees.");
+			} finally {
+				setIsLoading(false);
 			}
 		}
 
@@ -152,12 +165,14 @@ export default function Acceuil() {
 						<span className="section-count">{monuments.length}</span>
 					</div>
 
-					{monuments.length === 0 ? (
+				{isLoading ? (
+					<MaquetteGrille count={3} />
+				) : monuments.length === 0 ? (
 						<p className="empty-state">Aucun monument trouve.</p>
 					) : (
 						<ul className="catalog-grid">
-							{monumentsFiltres.map((monument) => (
-								<li key={monument.id} className="catalog-card monument-card">
+					{monumentsFiltres.map((monument, index) => (
+						<li key={monument.id} className="catalog-card monument-card" style={{ '--card-delay': `${index * 0.07}s` }}>
 									<div className="catalog-card-header">
 										<div>
 											<p className="card-tag">Monument</p>
@@ -209,8 +224,8 @@ export default function Acceuil() {
 						<p className="empty-state">Aucun circuit trouve.</p>
 					) : (
 						<ul className="catalog-grid">
-							{circuits.map((circuit) => (
-								<li key={circuit.id} className="catalog-card circuit-card">
+					{circuits.map((circuit, index) => (
+						<li key={circuit.id} className="catalog-card circuit-card" style={{ '--card-delay': `${index * 0.07}s` }}>
 									<div className="day-badge" aria-label={`${circuit.nbjours} jours`}>
 										<strong>{circuit.nbjours}</strong>
 										<span>jours</span>

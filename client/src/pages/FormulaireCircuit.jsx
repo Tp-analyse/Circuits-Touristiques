@@ -90,7 +90,14 @@ export default function FormulaireCircuit() {
     }
 
     function removeFromItineraire(monumentId) {
-        setItineraire((prev) => prev.filter((item) => item.id !== monumentId));
+        setItineraire((prev) =>
+            prev.map((item) =>
+                item.id === monumentId ? { ...item, removing: true } : item
+            )
+        );
+        setTimeout(() => {
+            setItineraire((prev) => prev.filter((item) => item.id !== monumentId));
+        }, 200);
     }
 
     function moveInItineraire(index, direction) {
@@ -245,7 +252,7 @@ export default function FormulaireCircuit() {
                     ) : (
                         <ul className="itineraire-list">
                             {itineraire.map((monument, index) => (
-                                <li key={monument.id}>
+                                <li key={monument.id} className={monument.removing ? 'itinerary-chip removing' : 'itinerary-chip'}>
                                     <span>
                                         {index + 1}. {monument.nom}
                                     </span>
