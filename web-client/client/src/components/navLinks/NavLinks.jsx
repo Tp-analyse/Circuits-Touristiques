@@ -22,9 +22,6 @@ export default function NavLinks() {
                         <NavLink to="/inscription">Inscription</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/rechercher">Rechercher Monument</NavLink>
-                    </li>
-                    <li>
                         <NavLink to="/deconnexion">Déconnexion</NavLink>
                     </li>
                 </>
