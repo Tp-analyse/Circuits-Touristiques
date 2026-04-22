@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE } from "../config/api";
 
 const EMPTY_FORM = {
     nom: "",
@@ -39,7 +40,7 @@ export default function FormulaireMonument() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/monuments", {
+            const response = await fetch(`${API_BASE}/api/monuments`, {
                 method: "POST",
                 headers,
                 body: JSON.stringify({

@@ -1,10 +1,35 @@
 const mysql = require('mysql');
 
+function parseInAppConnStr(connStr) {
+    const map = {};
+    connStr.split(';').forEach(part => {
+        const eq = part.indexOf('=');
+        if (eq === -1) return;
+        const key = part.slice(0, eq).trim();
+        const val = part.slice(eq + 1).trim();
+        map[key] = val;
+    });
+    return {
+        host: map['Data Source'] || 'localhost',
+        user: map['User Id'] || 'azure',
+        password: map['Password'] || '',
+        database: map['Database'] || 'localdb',
+    };
+}
+
+const inApp = process.env.MYSQLCONNSTR_localdb
+    ? parseInAppConnStr(process.env.MYSQLCONNSTR_localdb)
+    : null;
+
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'data',
-    password: '1234',
-    database: 'gestionProduit'
+    host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'localhost'),
+    user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
+    password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
+    database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
+    port:     Number(process.env.DB_PORT) || 3306,
+    ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
+        ? { rejectUnauthorized: false }
+        : false,
 });
 
 const query = (sql, params = []) => {

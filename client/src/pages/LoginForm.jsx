@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
+import { API_BASE } from "../config/api";
 
 const EMPTY_FORM = {
     courriel: "",
@@ -29,7 +30,7 @@ export default function LoginForm() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/users/connexion", {
+            const response = await fetch(`${API_BASE}/api/users/connexion`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

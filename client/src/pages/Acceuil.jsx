@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
+import { API_BASE } from "../config/api";
 
 function formatPrice(value) {
 	return `${Number(value || 0).toFixed(2)} $`;
@@ -61,14 +62,14 @@ export default function Acceuil() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const responseMonuments = await fetch("http://localhost:3000/api/monuments");
+				const responseMonuments = await fetch(`${API_BASE}/api/monuments`);
 				const dataMonuments = await responseMonuments.json();
 
 				if (!responseMonuments.ok) {
 					throw new Error(dataMonuments.message || "Impossible de charger les monuments.");
 				}
 
-				const responseCircuits = await fetch("http://localhost:3000/api/circuits");
+				const responseCircuits = await fetch(`${API_BASE}/api/circuits`);
 				const dataCircuits = await responseCircuits.json();
 
 				if (!responseCircuits.ok) {
@@ -96,7 +97,7 @@ export default function Acceuil() {
 				const headers = {};
 				if (token) headers.Authorization = token;
 				try {
-					const response = await fetch(`http://localhost:3000/api/monuments/${id}`, { method: "DELETE", headers });
+					const response = await fetch(`${API_BASE}/api/monuments/${id}`, { method: "DELETE", headers });
 					const data = await response.json();
 					if (!response.ok) throw new Error(data.message || "La suppression du monument a echoue.");
 					setMonuments((prev) => prev.filter((m) => m.id !== id));
@@ -117,7 +118,7 @@ export default function Acceuil() {
 				const headers = {};
 				if (token) headers.Authorization = token;
 				try {
-					const response = await fetch(`http://localhost:3000/api/circuits/${id}`, { method: "DELETE", headers });
+					const response = await fetch(`${API_BASE}/api/circuits/${id}`, { method: "DELETE", headers });
 					const data = await response.json();
 					if (!response.ok) throw new Error(data.message || "La suppression du circuit a echoue.");
 					setCircuits((prev) => prev.filter((c) => c.id !== id));

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { API_BASE } from "../config/api";
 
 const EMPTY_FORM = {
     nom: "",
@@ -24,7 +25,7 @@ export default function FormulaireCircuit() {
             }
 
             try {
-                const response = await fetch("http://localhost:3000/api/monuments", {
+                const response = await fetch(`${API_BASE}/api/monuments`, {
                     headers,
                 });
                 const data = await response.json();
@@ -150,7 +151,7 @@ export default function FormulaireCircuit() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/circuits", {
+            const response = await fetch(`${API_BASE}/api/circuits`, {
                 method: "POST",
                 headers,
                 body: JSON.stringify({

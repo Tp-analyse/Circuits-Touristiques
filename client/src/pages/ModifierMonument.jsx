@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { API_BASE } from "../config/api";
 
 const EMPTY_FORM = {
     nom: "",
@@ -20,7 +21,7 @@ export default function ModifierMonument() {
     useEffect(() => {
         async function fetchMonument() {
             try {
-                const response = await fetch(`http://localhost:3000/api/monuments/${id}`);
+                const response = await fetch(`${API_BASE}/api/monuments/${id}`);
                 const data = await response.json();
 
                 if (!response.ok) {
@@ -81,7 +82,7 @@ export default function ModifierMonument() {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/monuments/${id}`, {
+            const response = await fetch(`${API_BASE}/api/monuments/${id}`, {
                 method: "PATCH",
                 headers,
                 body: JSON.stringify({

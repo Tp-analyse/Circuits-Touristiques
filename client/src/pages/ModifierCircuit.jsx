@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { API_BASE } from "../config/api";
 
 const EMPTY_FORM = {
     nom: "",
@@ -22,14 +23,14 @@ export default function ModifierCircuit() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const responseMonuments = await fetch("http://localhost:3000/api/monuments");
+                const responseMonuments = await fetch(`${API_BASE}/api/monuments`);
                 const dataMonuments = await responseMonuments.json();
 
                 if (!responseMonuments.ok) {
                     throw new Error(dataMonuments.message || "Impossible de charger les monuments.");
                 }
 
-                const responseCircuit = await fetch(`http://localhost:3000/api/circuits/${id}`);
+                const responseCircuit = await fetch(`${API_BASE}/api/circuits/${id}`);
                 const dataCircuit = await responseCircuit.json();
 
                 if (!responseCircuit.ok) {
@@ -154,7 +155,7 @@ export default function ModifierCircuit() {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/circuits/${id}`, {
+            const response = await fetch(`${API_BASE}/api/circuits/${id}`, {
                 method: "PATCH",
                 headers,
                 body: JSON.stringify({
