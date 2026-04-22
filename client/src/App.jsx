@@ -6,6 +6,7 @@ import Deconnexion from "./pages/Deconnexion";
 import LoginForm from "./pages/LoginForm";
 import FormulaireMonument from "./pages/FormulaireMonument";
 import FormulaireCircuit from "./pages/FormulaireCircuit";
+import FormulaireGuide from "./pages/FormulaireGuide";
 import ModifierMonument from "./pages/ModifierMonument";
 import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
@@ -51,6 +52,7 @@ const routerLogin = createBrowserRouter([
             { path: "monuments/:id/modifier", element: <ModifierMonument /> },
             { path: "circuits/nouveau", element: <FormulaireCircuit /> },
             { path: "circuits/:id/modifier", element: <ModifierCircuit /> },
+            { path: "guides/nouveau", element: <FormulaireGuide /> },
             { path: "deconnexion", element: <Deconnexion /> },
         ],
     },

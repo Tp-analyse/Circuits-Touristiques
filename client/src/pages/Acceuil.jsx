@@ -265,6 +265,15 @@ export default function Acceuil() {
 										)}
 									</div>
 
+									<div className="guide-block">
+										<p className="itinerary-title">Guide</p>
+										{circuit.guide ? (
+											<p className="empty-inline">{circuit.guide.prenom} {circuit.guide.nom}</p>
+										) : (
+											<p className="empty-inline">Aucun guide assigné.</p>
+										)}
+									</div>
+
 									<div className="catalog-actions">
 										<Link to={`/circuits/${circuit.id}/modifier`}>
 											<button type="button">Modifier</button>

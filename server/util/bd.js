@@ -90,6 +90,28 @@ const initDB = async () => {
         )
     `);
 
+    await query(`
+        CREATE TABLE IF NOT EXISTS guide (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nom VARCHAR(100) NOT NULL,
+            prenom VARCHAR(100) NOT NULL
+        )
+    `);
+
+    await query(`
+        CREATE TABLE IF NOT EXISTS circuit_guide (
+            circuit_id INT NOT NULL,
+            guide_id INT NOT NULL,
+            PRIMARY KEY (circuit_id),
+            CONSTRAINT fk_circuit_guide_circuit
+                FOREIGN KEY (circuit_id) REFERENCES circuit(id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_circuit_guide_guide
+                FOREIGN KEY (guide_id) REFERENCES guide(id)
+                ON DELETE CASCADE
+        )
+    `);
+
     console.log('Tables MySQL initialisées');
 };
 

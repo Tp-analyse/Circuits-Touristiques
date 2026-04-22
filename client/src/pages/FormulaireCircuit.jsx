@@ -14,38 +14,40 @@ export default function FormulaireCircuit() {
     const [monuments, setMonuments] = useState([]);
     const [selectedMonumentId, setSelectedMonumentId] = useState("");
     const [itineraire, setItineraire] = useState([]);
+    const [guides, setGuides] = useState([]);
+    const [selectedGuideId, setSelectedGuideId] = useState("");
 
     useEffect(() => {
-        async function fetchMonuments() {
+        async function fetchData() {
             const token = window.localStorage.getItem("token");
             const headers = {};
-
-            if (token) {
-                headers.Authorization = token;
-            }
+            if (token) headers.Authorization = token;
 
             try {
-                const response = await fetch(`${API_BASE}/api/monuments`, {
-                    headers,
-                });
-                const data = await response.json();
+                const [responseMonuments, responseGuides] = await Promise.all([
+                    fetch(`${API_BASE}/api/monuments`, { headers }),
+                    fetch(`${API_BASE}/api/guides`),
+                ]);
 
-                if (!response.ok) {
-                    throw new Error(data.message || "Impossible de charger les monuments.");
+                const dataMonuments = await responseMonuments.json();
+                if (!responseMonuments.ok) {
+                    throw new Error(dataMonuments.message || "Impossible de charger les monuments.");
                 }
 
-                const monumentsData = data.monuments || [];
-                setMonuments(monumentsData);
+                const dataGuides = await responseGuides.json();
 
+                const monumentsData = dataMonuments.monuments || [];
+                setMonuments(monumentsData);
                 if (monumentsData.length > 0) {
                     setSelectedMonumentId(String(monumentsData[0].id));
                 }
+                setGuides(dataGuides.guides || []);
             } catch (error) {
-                setMessage(error.message || "Impossible de charger les monuments.");
+                setMessage(error.message || "Impossible de charger les données.");
             }
         }
 
-        fetchMonuments();
+        fetchData();
     }, []);
 
     const monumentsDisponibles = useMemo(() => {
@@ -121,6 +123,7 @@ export default function FormulaireCircuit() {
         setForm(EMPTY_FORM);
         setMessage("");
         setItineraire([]);
+        setSelectedGuideId("");
     }
 
     async function handleSubmit(e) {
@@ -169,9 +172,20 @@ export default function FormulaireCircuit() {
                 throw new Error(data.message || "La creation du circuit a echoue.");
             }
 
+            const circuitId = data.circuit.id;
+
+            if (selectedGuideId) {
+                await fetch(`${API_BASE}/api/circuits/${circuitId}/guide`, {
+                    method: "POST",
+                    headers,
+                    body: JSON.stringify({ guide_id: Number(selectedGuideId) }),
+                });
+            }
+
             setMessage("Circuit cree avec succes.");
             setForm(EMPTY_FORM);
             setItineraire([]);
+            setSelectedGuideId("");
         } catch (error) {
             setMessage(error.message || "La creation du circuit a echoue.");
         }
@@ -283,6 +297,22 @@ export default function FormulaireCircuit() {
                             ))}
                         </ul>
                     )}
+                </div>
+
+                <div>
+                    <label htmlFor="guide-select">Guide (optionnel)</label>
+                    <select
+                        id="guide-select"
+                        value={selectedGuideId}
+                        onChange={(e) => setSelectedGuideId(e.target.value)}
+                    >
+                        <option value="">Aucun guide</option>
+                        {guides.map((g) => (
+                            <option key={g.id} value={g.id}>
+                                {g.prenom} {g.nom}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 {message && <p>{message}</p>}

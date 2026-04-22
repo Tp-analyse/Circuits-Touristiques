@@ -46,6 +46,24 @@ const getAllCircuits = async (req, res, next) => {
 		monumentsByCircuitId.set(monument.circuit_id, currentMonuments);
 	});
 
+	let circuitGuides;
+	try {
+		circuitGuides = await query(
+			`SELECT circuit_guide.circuit_id, guide.id, guide.nom, guide.prenom
+             FROM circuit_guide
+             INNER JOIN guide ON guide.id = circuit_guide.guide_id
+             WHERE circuit_guide.circuit_id IN (?)`,
+			[circuits.map((circuit) => circuit.id)]
+		);
+	} catch (error) {
+		circuitGuides = [];
+	}
+
+	const guidByCircuitId = new Map();
+	circuitGuides.forEach((row) => {
+		guidByCircuitId.set(row.circuit_id, { id: row.id, nom: row.nom, prenom: row.prenom });
+	});
+
 	res.json({
 		circuits: circuits.map((circuit) => {
 			const itineraire = monumentsByCircuitId.get(circuit.id) || [];
@@ -58,6 +76,7 @@ const getAllCircuits = async (req, res, next) => {
 				...circuit,
 				itineraire,
 				total_prix,
+				guide: guidByCircuitId.get(circuit.id) || null,
 			};
 		}),
 	});
@@ -91,10 +110,24 @@ const getCircuitById = async (req, res, next) => {
 		return next(new HttpError("Erreur lors de la récupération de l'itinéraire.", 500));
 	}
 
+	let circuitGuide;
+	try {
+		const rows = await query(
+			`SELECT guide.id, guide.nom, guide.prenom FROM circuit_guide
+             INNER JOIN guide ON guide.id = circuit_guide.guide_id
+             WHERE circuit_guide.circuit_id = ?`,
+			[id]
+		);
+		circuitGuide = rows[0] || null;
+	} catch (error) {
+		circuitGuide = null;
+	}
+
 	res.json({
 		circuit: {
 			...circuits[0],
 			itineraire,
+			guide: circuitGuide,
 		},
 	});
 };

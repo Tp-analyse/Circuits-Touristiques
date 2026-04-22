@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, check } = require('express-validator');
 const circuitsController = require('../controllers/circuits-controller');
+const guidesController = require('../controllers/guides-controller');
 const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
@@ -29,5 +30,8 @@ router.patch('/:id', [
 ], circuitsController.modifierCircuit);
 
 router.delete('/:id', circuitsController.supprimerCircuit);
+
+router.post('/:id/guide', guidesController.assignerGuide);
+router.delete('/:id/guide', guidesController.desassignerGuide);
 
 module.exports = router;

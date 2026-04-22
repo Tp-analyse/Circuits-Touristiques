@@ -16,6 +16,9 @@ export default function ModifierCircuit() {
     const [selectedMonumentId, setSelectedMonumentId] = useState("");
     const [itineraire, setItineraire] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [guides, setGuides] = useState([]);
+    const [guideAssigne, setGuideAssigne] = useState(null);
+    const [selectedGuideId, setSelectedGuideId] = useState("");
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -23,19 +26,23 @@ export default function ModifierCircuit() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const responseMonuments = await fetch(`${API_BASE}/api/monuments`);
-                const dataMonuments = await responseMonuments.json();
+                const [responseMonuments, responseCircuit, responseGuides] = await Promise.all([
+                    fetch(`${API_BASE}/api/monuments`),
+                    fetch(`${API_BASE}/api/circuits/${id}`),
+                    fetch(`${API_BASE}/api/guides`),
+                ]);
 
+                const dataMonuments = await responseMonuments.json();
                 if (!responseMonuments.ok) {
                     throw new Error(dataMonuments.message || "Impossible de charger les monuments.");
                 }
 
-                const responseCircuit = await fetch(`${API_BASE}/api/circuits/${id}`);
                 const dataCircuit = await responseCircuit.json();
-
                 if (!responseCircuit.ok) {
                     throw new Error(dataCircuit.message || "Impossible de charger le circuit.");
                 }
+
+                const dataGuides = await responseGuides.json();
 
                 const monumentsData = dataMonuments.monuments || [];
                 const circuit = dataCircuit.circuit;
@@ -48,6 +55,8 @@ export default function ModifierCircuit() {
                     villeArrivee: circuit.ville_arrivee || "",
                 });
                 setItineraire(circuit.itineraire || []);
+                setGuides(dataGuides.guides || []);
+                setGuideAssigne(circuit.guide || null);
             } catch (error) {
                 setMessage(error.message || "Impossible de charger le circuit.");
             } finally {
@@ -57,6 +66,47 @@ export default function ModifierCircuit() {
 
         fetchData();
     }, [id]);
+
+    async function assignerGuide() {
+        if (!selectedGuideId) return;
+        const token = window.localStorage.getItem("token");
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = token;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/circuits/${id}/guide`, {
+                method: "POST",
+                headers,
+                body: JSON.stringify({ guide_id: Number(selectedGuideId) }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || "Assignation échouée.");
+            setGuideAssigne(data.guide);
+            setSelectedGuideId("");
+            setMessage("Guide assigné avec succès.");
+        } catch (error) {
+            setMessage(error.message || "Assignation échouée.");
+        }
+    }
+
+    async function desassignerGuide() {
+        const token = window.localStorage.getItem("token");
+        const headers = {};
+        if (token) headers.Authorization = token;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/circuits/${id}/guide`, {
+                method: "DELETE",
+                headers,
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || "Désassignation échouée.");
+            setGuideAssigne(null);
+            setMessage("Guide désassigné avec succès.");
+        } catch (error) {
+            setMessage(error.message || "Désassignation échouée.");
+        }
+    }
 
     const monumentsDisponibles = useMemo(() => {
         const selectedIds = new Set(itineraire.map((item) => item.id));
@@ -299,6 +349,40 @@ export default function ModifierCircuit() {
                                 </li>
                             ))}
                         </ul>
+                    )}
+                </div>
+
+                <div>
+                    <p>Guide assigné</p>
+                    {guideAssigne ? (
+                        <div>
+                            <span>{guideAssigne.prenom} {guideAssigne.nom}</span>
+                            <button type="button" onClick={desassignerGuide}>
+                                Désassigner
+                            </button>
+                        </div>
+                    ) : (
+                        <p>Aucun guide assigné.</p>
+                    )}
+                    {guides.length > 0 && (
+                        <div>
+                            <label htmlFor="guide-select">Assigner un guide</label>
+                            <select
+                                id="guide-select"
+                                value={selectedGuideId}
+                                onChange={(e) => setSelectedGuideId(e.target.value)}
+                            >
+                                <option value="">Sélectionner un guide</option>
+                                {guides.map((g) => (
+                                    <option key={g.id} value={g.id}>
+                                        {g.prenom} {g.nom}
+                                    </option>
+                                ))}
+                            </select>
+                            <button type="button" disabled={!selectedGuideId} onClick={assignerGuide}>
+                                Assigner
+                            </button>
+                        </div>
                     )}
                 </div>
 

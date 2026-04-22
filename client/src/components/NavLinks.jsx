@@ -23,6 +23,9 @@ export default function NavLinks() {
 						<NavLink to="/circuits/nouveau">Nouveau circuit</NavLink>
 					</li>
 					<li>
+						<NavLink to="/guides/nouveau">Nouveau guide</NavLink>
+					</li>
+					<li>
 						<NavLink to="/deconnexion">Déconnexion</NavLink>
 					</li>
 				</>
