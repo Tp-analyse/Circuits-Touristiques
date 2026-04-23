@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 
 app.use(errorHandler);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 initDB()
     .then(() => populateDatabase())

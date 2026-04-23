@@ -1,21 +1,38 @@
 const mysql = require('mysql');
 
-const DB_CONFIG = {
-    host: 'localhost',
-    user: 'data',
-    password: '1234',
-    database: 'gestionProduit',
-    port: 3306,
-    ssl: false,
-};
+function parseInAppConnStr(connStr) {
+    const map = {};
+    connStr.split(';').forEach(part => {
+        const eq = part.indexOf('=');
+        if (eq === -1) return;
+        const key = part.slice(0, eq).trim();
+        const val = part.slice(eq + 1).trim();
+        map[key] = val;
+    });
+    const dataSource = map['Data Source'] || 'localhost';
+    const [dsHost, dsPort] = dataSource.includes(':') ? dataSource.split(':') : [dataSource, null];
+    return {
+        host: dsHost,
+        user: map['User Id'] || 'azure',
+        password: map['Password'] || '',
+        database: map['Database'] || map['Initial Catalog'] || 'localdb',
+        port: dsPort ? Number(dsPort) : (Number(map['Port']) || Number(process.env.MYSQLPORT_localdb) || 3306),
+    };
+}
+
+const inApp = process.env.MYSQLCONNSTR_localdb
+    ? parseInAppConnStr(process.env.MYSQLCONNSTR_localdb)
+    : null;
 
 const pool = mysql.createPool({
-    host: DB_CONFIG.host,
-    user: DB_CONFIG.user,
-    password: DB_CONFIG.password,
-    database: DB_CONFIG.database,
-    port: DB_CONFIG.port,
-    ssl: DB_CONFIG.ssl,
+    host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'localhost'),
+    user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
+    password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
+    database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
+    port:     inApp ? inApp.port     : (Number(process.env.DB_PORT) || 3306),
+    ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
+        ? { rejectUnauthorized: false }
+        : false,
 });
 
 const query = (sql, params = []) => {
