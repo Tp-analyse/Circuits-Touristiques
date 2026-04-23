@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import ModifierMonument from "./ModifierMonument";
+import { API_BASE } from "../config/api";
 
 const mockNavigate = vi.fn();
 
@@ -125,7 +126,7 @@ describe("ModifierMonument", () => {
 		fireEvent.click(screen.getByRole("button", { name: /enregistrer/i }));
 
 		await waitFor(() => {
-			expect(fetch).toHaveBeenNthCalledWith(2, "http://localhost:3000/api/monuments/123", {
+			expect(fetch).toHaveBeenNthCalledWith(2, `${API_BASE}/api/monuments/123`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",

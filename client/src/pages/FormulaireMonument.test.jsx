@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import FormulaireMonument from "./FormulaireMonument";
+import { API_BASE } from "../config/api";
 
 describe("FormulaireMonument", () => {
     const getItemMock = vi.fn();
@@ -71,7 +72,7 @@ describe("FormulaireMonument", () => {
         fireEvent.click(screen.getByRole("button", { name: /cr/i }));
 
         await waitFor(() => {
-            expect(fetch).toHaveBeenCalledWith("http://localhost:3000/api/monuments", {
+            expect(fetch).toHaveBeenCalledWith(`${API_BASE}/api/monuments`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

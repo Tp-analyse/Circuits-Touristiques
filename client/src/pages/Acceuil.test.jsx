@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import Acceuil from "./Acceuil";
+import { API_BASE } from "../config/api";
 
 describe("Acceuil", () => {
 	const getItemMock = vi.fn();
@@ -10,7 +11,6 @@ describe("Acceuil", () => {
 	beforeEach(() => {
 		vi.restoreAllMocks();
 		vi.stubGlobal("fetch", vi.fn());
-		vi.stubGlobal("confirm", vi.fn());
 
 		Object.defineProperty(window, "localStorage", {
 			value: {
@@ -92,7 +92,6 @@ describe("Acceuil", () => {
 	it("supprime un monument apres confirmation", async () => {
 		getItemMock.mockReturnValue("jwt-test");
 		mockInitialFetches();
-		confirm.mockReturnValue(true);
 		fetch.mockResolvedValueOnce({
 			ok: true,
 			json: async () => ({ message: "Suppression ok" }),
@@ -106,9 +105,11 @@ describe("Acceuil", () => {
 
 		await screen.findByRole("heading", { name: "Tour Eiffel" });
 		fireEvent.click(getItemActions("Tour Eiffel").getByRole("button", { name: /supprimer/i }));
+		const dialog = await screen.findByText("Voulez-vous vraiment supprimer ce monument ?");
+		fireEvent.click(within(dialog.closest(".confirm-dialog")).getByRole("button", { name: "Supprimer" }));
 
 		await waitFor(() => {
-			expect(fetch).toHaveBeenNthCalledWith(3, "http://localhost:3000/api/monuments/1", {
+			expect(fetch).toHaveBeenNthCalledWith(3, `${API_BASE}/api/monuments/1`, {
 				method: "DELETE",
 				headers: {
 					Authorization: "jwt-test",
@@ -122,7 +123,6 @@ describe("Acceuil", () => {
 
 	it("n envoie pas la requete de suppression si l utilisateur annule", async () => {
 		mockInitialFetches();
-		confirm.mockReturnValue(false);
 
 		render(
 			<MemoryRouter>
@@ -132,6 +132,7 @@ describe("Acceuil", () => {
 
 		await screen.findByRole("heading", { name: "Tour Eiffel" });
 		fireEvent.click(getItemActions("Tour Eiffel").getByRole("button", { name: /supprimer/i }));
+		fireEvent.click((await screen.findByText("Voulez-vous vraiment supprimer ce monument ?")).closest(".confirm-dialog").querySelector("button"));
 
 		expect(fetch).toHaveBeenCalledTimes(2);
 		expect(screen.getByRole("heading", { name: "Tour Eiffel" })).toBeInTheDocument();
@@ -140,7 +141,6 @@ describe("Acceuil", () => {
 	it("affiche le message du backend si la suppression du monument echoue", async () => {
 		getItemMock.mockReturnValue("jwt-test");
 		mockInitialFetches();
-		confirm.mockReturnValue(true);
 		fetch.mockResolvedValueOnce({
 			ok: false,
 			json: async () => ({ message: "Suppression impossible." }),
@@ -154,6 +154,8 @@ describe("Acceuil", () => {
 
 		await screen.findByRole("heading", { name: "Tour Eiffel" });
 		fireEvent.click(getItemActions("Tour Eiffel").getByRole("button", { name: /supprimer/i }));
+		const dialog = await screen.findByText("Voulez-vous vraiment supprimer ce monument ?");
+		fireEvent.click(within(dialog.closest(".confirm-dialog")).getByRole("button", { name: "Supprimer" }));
 
 		expect(await screen.findByText("Suppression impossible.")).toBeInTheDocument();
 		expect(screen.getByRole("heading", { name: "Tour Eiffel" })).toBeInTheDocument();
@@ -162,7 +164,6 @@ describe("Acceuil", () => {
 	it("supprime un circuit apres confirmation", async () => {
 		getItemMock.mockReturnValue("jwt-test");
 		mockInitialFetches();
-		confirm.mockReturnValue(true);
 		fetch.mockResolvedValueOnce({
 			ok: true,
 			json: async () => ({ message: "Suppression ok" }),
@@ -176,9 +177,11 @@ describe("Acceuil", () => {
 
 		await screen.findByRole("heading", { name: "Circuit de Paris" });
 		fireEvent.click(getItemActions("Circuit de Paris").getByRole("button", { name: /supprimer/i }));
+		const dialog = await screen.findByText("Voulez-vous vraiment supprimer ce circuit ?");
+		fireEvent.click(within(dialog.closest(".confirm-dialog")).getByRole("button", { name: "Supprimer" }));
 
 		await waitFor(() => {
-			expect(fetch).toHaveBeenNthCalledWith(3, "http://localhost:3000/api/circuits/10", {
+			expect(fetch).toHaveBeenNthCalledWith(3, `${API_BASE}/api/circuits/10`, {
 				method: "DELETE",
 				headers: {
 					Authorization: "jwt-test",
@@ -192,7 +195,6 @@ describe("Acceuil", () => {
 
 	it("n envoie pas la requete de suppression du circuit si l utilisateur annule", async () => {
 		mockInitialFetches();
-		confirm.mockReturnValue(false);
 
 		render(
 			<MemoryRouter>
@@ -202,6 +204,7 @@ describe("Acceuil", () => {
 
 		await screen.findByRole("heading", { name: "Circuit de Paris" });
 		fireEvent.click(getItemActions("Circuit de Paris").getByRole("button", { name: /supprimer/i }));
+		fireEvent.click((await screen.findByText("Voulez-vous vraiment supprimer ce circuit ?")).closest(".confirm-dialog").querySelector("button"));
 
 		expect(fetch).toHaveBeenCalledTimes(2);
 		expect(screen.getByRole("heading", { name: "Circuit de Paris" })).toBeInTheDocument();
@@ -210,7 +213,6 @@ describe("Acceuil", () => {
 	it("affiche le message du backend si la suppression du circuit echoue", async () => {
 		getItemMock.mockReturnValue("jwt-test");
 		mockInitialFetches();
-		confirm.mockReturnValue(true);
 		fetch.mockResolvedValueOnce({
 			ok: false,
 			json: async () => ({ message: "Suppression du circuit impossible." }),
@@ -224,6 +226,8 @@ describe("Acceuil", () => {
 
 		await screen.findByRole("heading", { name: "Circuit de Paris" });
 		fireEvent.click(getItemActions("Circuit de Paris").getByRole("button", { name: /supprimer/i }));
+		const dialog = await screen.findByText("Voulez-vous vraiment supprimer ce circuit ?");
+		fireEvent.click(within(dialog.closest(".confirm-dialog")).getByRole("button", { name: "Supprimer" }));
 
 		expect(await screen.findByText("Suppression du circuit impossible.")).toBeInTheDocument();
 		expect(screen.getByRole("heading", { name: "Circuit de Paris" })).toBeInTheDocument();

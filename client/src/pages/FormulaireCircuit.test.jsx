@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import FormulaireCircuit from "./FormulaireCircuit";
+import { API_BASE } from "../config/api";
 
 describe("FormulaireCircuit", () => {
     const getItemMock = vi.fn();
@@ -29,6 +30,9 @@ describe("FormulaireCircuit", () => {
         fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => ({ monuments: [] }),
+        }).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ guides: [] }),
         });
 
         render(<FormulaireCircuit />);
@@ -47,6 +51,10 @@ describe("FormulaireCircuit", () => {
                         { id: "m2", nom: "Louvre" },
                     ],
                 }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({ guides: [] }),
             })
             .mockResolvedValueOnce({
                 ok: true,
@@ -69,7 +77,7 @@ describe("FormulaireCircuit", () => {
         fireEvent.click(screen.getByRole("button", { name: /creer/i }));
 
         await waitFor(() => {
-            expect(fetch).toHaveBeenNthCalledWith(2, "http://localhost:3000/api/circuits", {
+            expect(fetch).toHaveBeenNthCalledWith(3, `${API_BASE}/api/circuits`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -92,6 +100,9 @@ describe("FormulaireCircuit", () => {
         fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => ({ monuments: [] }),
+        }).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ guides: [] }),
         });
 
         render(<FormulaireCircuit />);
