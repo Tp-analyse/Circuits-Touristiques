@@ -74,7 +74,7 @@ export default function InscriptionClient() {
 
         try {
             const response = await fetch(
-                "http://localhost:3000/api/users/inscription",
+                `${import.meta.env.VITE_API_URL}/api/users/inscription`,
                 {
                     method: "POST",
                     headers: {

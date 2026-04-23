@@ -37,8 +37,8 @@ export default function HomePage() {
                 const headers = token ? { Authorization: token } : {};
 
                 const [resMonuments, resCircuits] = await Promise.all([
-                    fetch("http://localhost:3000/api/monuments", { headers }),
-                    fetch("http://localhost:3000/api/circuits", { headers })
+                    fetch(`${import.meta.env.VITE_API_URL}/api/monuments`, { headers }),
+                    fetch(`${import.meta.env.VITE_API_URL}/api/circuits`, { headers })
                 ]);
 
                 const dataMonuments = await resMonuments.json();
