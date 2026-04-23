@@ -9,12 +9,14 @@ function parseInAppConnStr(connStr) {
         const val = part.slice(eq + 1).trim();
         map[key] = val;
     });
+    const dataSource = map['Data Source'] || 'localhost';
+    const [dsHost, dsPort] = dataSource.includes(':') ? dataSource.split(':') : [dataSource, null];
     return {
-        host: map['Data Source'] || 'localhost',
+        host: dsHost,
         user: map['User Id'] || 'azure',
         password: map['Password'] || '',
         database: map['Database'] || map['Initial Catalog'] || 'localdb',
-        port: Number(map['Port']) || Number(process.env.MYSQLPORT_localdb) || 3306,
+        port: dsPort ? Number(dsPort) : (Number(map['Port']) || Number(process.env.MYSQLPORT_localdb) || 3306),
     };
 }
 
