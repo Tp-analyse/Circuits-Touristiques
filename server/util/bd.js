@@ -29,7 +29,7 @@ const pool = mysql.createPool({
     user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
     password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
     database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
-    port:     Number(process.env.DB_PORT) || 3306,
+    port:     inApp ? inApp.port : (Number(process.env.DB_PORT) || 3306),
     ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
         ? { rejectUnauthorized: false }
         : false,
