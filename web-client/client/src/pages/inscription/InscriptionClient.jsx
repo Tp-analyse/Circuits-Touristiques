@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = "https://serveur-b0cxhcg0c4bsgyez.germanywestcentral-01.azurewebsites.net";
+
 const EMPTY_FORM = {
     nom: "",
     prenom: "",
@@ -74,7 +76,7 @@ export default function InscriptionClient() {
 
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/users/inscription`,
+                `${API_BASE_URL}/api/users/inscription`,
                 {
                     method: "POST",
                     headers: {

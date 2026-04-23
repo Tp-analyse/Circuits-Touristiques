@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const API_BASE_URL = "https://serveur-b0cxhcg0c4bsgyez.germanywestcentral-01.azurewebsites.net";
+
 function formatPrice(value) {
     return `${Number(value || 0).toFixed(2)} $`;
 }
@@ -37,8 +39,8 @@ export default function HomePage() {
                 const headers = token ? { Authorization: token } : {};
 
                 const [resMonuments, resCircuits] = await Promise.all([
-                    fetch(`${import.meta.env.VITE_API_URL}/api/monuments`, { headers }),
-                    fetch(`${import.meta.env.VITE_API_URL}/api/circuits`, { headers })
+                    fetch(`${API_BASE_URL}/api/monuments`, { headers }),
+                    fetch(`${API_BASE_URL}/api/circuits`, { headers })
                 ]);
 
                 const dataMonuments = await resMonuments.json();

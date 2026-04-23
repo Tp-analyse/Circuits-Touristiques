@@ -2,6 +2,8 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 
+const API_BASE_URL = "https://serveur-b0cxhcg0c4bsgyez.germanywestcentral-01.azurewebsites.net";
+
 const FORM_VIDE = {
     courriel: "",
     motDePasse: ""
@@ -45,7 +47,7 @@ export default function LoginForm() {
         setMessageErreur("");
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/connexion`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/connexion`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: courriel, password: motDePasse })
