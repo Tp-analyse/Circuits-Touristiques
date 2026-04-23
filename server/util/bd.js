@@ -24,26 +24,26 @@ const inApp = process.env.MYSQLCONNSTR_localdb
     ? parseInAppConnStr(process.env.MYSQLCONNSTR_localdb)
     : null;
 
-// const pool = mysql.createPool({
-//     host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'localhost'),
-//     user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
-//     password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
-//     database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
-//     port:     Number(process.env.DB_PORT) || 3306,
-//     ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
-//         ? { rejectUnauthorized: false }
-//         : false,
-// });
 const pool = mysql.createPool({
-    host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'mysqltest40.mysql.database.azure.com'),
+    host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'localhost'),
     user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
-    password: inApp ? inApp.password : (process.env.DB_PASSWORD || 'Allo!234'),
+    password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
     database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
-    port:     inApp ? inApp.port : (Number(process.env.DB_PORT) || 3306),
-    ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'mysqltest40.mysql.database.azure.com'
+    port:     Number(process.env.DB_PORT) || 3306,
+    ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
         ? { rejectUnauthorized: false }
         : false,
 });
+// const pool = mysql.createPool({
+//     host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'mysqltest40.mysql.database.azure.com'),
+//     user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
+//     password: inApp ? inApp.password : (process.env.DB_PASSWORD || 'Allo!234'),
+//     database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
+//     port:     inApp ? inApp.port : (Number(process.env.DB_PORT) || 3306),
+//     ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'mysqltest40.mysql.database.azure.com'
+//         ? { rejectUnauthorized: false }
+//         : false,
+// });
 
 const query = (sql, params = []) => {
     return new Promise((resolve, reject) => {
