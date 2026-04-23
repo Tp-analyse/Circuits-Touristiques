@@ -13,7 +13,8 @@ function parseInAppConnStr(connStr) {
         host: map['Data Source'] || 'localhost',
         user: map['User Id'] || 'azure',
         password: map['Password'] || '',
-        database: map['Database'] || 'localdb',
+        database: map['Database'] || map['Initial Catalog'] || 'localdb',
+        port: Number(map['Port']) || Number(process.env.MYSQLPORT_localdb) || 3306,
     };
 }
 
@@ -36,7 +37,7 @@ const pool = mysql.createPool({
     user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
     password: inApp ? inApp.password : (process.env.DB_PASSWORD || 'Allo!234'),
     database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
-    port:     Number(process.env.DB_PORT) || 3306,
+    port:     inApp ? inApp.port : (Number(process.env.DB_PORT) || 3306),
     ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'mysqltest40.mysql.database.azure.com'
         ? { rejectUnauthorized: false }
         : false,
