@@ -1,3 +1,5 @@
+// Visualization des données sur azure: https://serveur-b0cxhcg0c4bsgyez.scm.germanywestcentral-01.azurewebsites.net/phpmyadmin
+
 const mysql = require('mysql');
 
 function parseInAppConnStr(connStr) {
