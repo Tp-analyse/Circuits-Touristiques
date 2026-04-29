@@ -6,7 +6,37 @@ const getAllCircuits = async (req, res, next) => {
 	let circuits;
 
 	try {
-		circuits = await query('SELECT * FROM circuit');
+		const { nom, ville_depart, ville_arrivee, nbjoursMin, nbjoursMax } = req.query;
+
+		let sql = 'SELECT * FROM circuit WHERE 1 = 1';
+		let params = [];
+
+		if (nom) {
+			sql += ' AND nom LIKE ?';
+			params.push('%' + nom + '%');
+		}
+
+		if (ville_depart) {
+			sql += ' AND ville_depart LIKE ?';
+			params.push('%' + ville_depart + '%');
+		}
+
+		if (ville_arrivee) {
+			sql += ' AND ville_arrivee LIKE ?';
+			params.push('%' + ville_arrivee + '%');
+		}
+
+		if (nbjoursMin) {
+			sql += ' AND nbjours >= ?';
+			params.push(Number(nbjoursMin));
+		}
+
+		if (nbjoursMax) {
+			sql += ' AND nbjours <= ?';
+			params.push(Number(nbjoursMax));
+		}
+
+		circuits = await query(sql, params);
 	} catch (error) {
 		return next(new HttpError("Erreur lors de la récupération des circuits.", 500));
 	}
@@ -47,6 +77,7 @@ const getAllCircuits = async (req, res, next) => {
 	});
 
 	let circuitGuides;
+
 	try {
 		circuitGuides = await query(
 			`SELECT circuit_guide.circuit_id, guide.id, guide.nom, guide.prenom
@@ -60,8 +91,13 @@ const getAllCircuits = async (req, res, next) => {
 	}
 
 	const guidByCircuitId = new Map();
+
 	circuitGuides.forEach((row) => {
-		guidByCircuitId.set(row.circuit_id, { id: row.id, nom: row.nom, prenom: row.prenom });
+		guidByCircuitId.set(row.circuit_id, {
+			id: row.id,
+			nom: row.nom,
+			prenom: row.prenom,
+		});
 	});
 
 	res.json({
@@ -86,6 +122,7 @@ const getCircuitById = async (req, res, next) => {
 	const { id } = req.params;
 
 	let circuits;
+
 	try {
 		circuits = await query('SELECT * FROM circuit WHERE id = ?', [id]);
 	} catch (error) {
@@ -97,6 +134,7 @@ const getCircuitById = async (req, res, next) => {
 	}
 
 	let itineraire;
+
 	try {
 		itineraire = await query(
 			`SELECT monument.id, monument.nom, circuit_monument.ordre
@@ -111,13 +149,16 @@ const getCircuitById = async (req, res, next) => {
 	}
 
 	let circuitGuide;
+
 	try {
 		const rows = await query(
-			`SELECT guide.id, guide.nom, guide.prenom FROM circuit_guide
+			`SELECT guide.id, guide.nom, guide.prenom
+             FROM circuit_guide
              INNER JOIN guide ON guide.id = circuit_guide.guide_id
              WHERE circuit_guide.circuit_id = ?`,
 			[id]
 		);
+
 		circuitGuide = rows[0] || null;
 	} catch (error) {
 		circuitGuide = null;
@@ -134,6 +175,7 @@ const getCircuitById = async (req, res, next) => {
 
 const creerCircuit = async (req, res, next) => {
 	const validationErrors = validationResult(req);
+
 	if (!validationErrors.isEmpty()) {
 		return next(new HttpError("Données saisies invalides.", 422));
 	}
@@ -146,6 +188,7 @@ const creerCircuit = async (req, res, next) => {
 
 	const monumentIds = itineraire.map((id) => Number(id));
 	const hasInvalidMonumentId = monumentIds.some((id) => !Number.isInteger(id) || id <= 0);
+
 	if (hasInvalidMonumentId) {
 		return next(new HttpError("L'itinéraire contient des identifiants de monuments invalides.", 422));
 	}
@@ -167,6 +210,7 @@ const creerCircuit = async (req, res, next) => {
 	}
 
 	let monuments;
+
 	try {
 		monuments = await query('SELECT id FROM monument WHERE id IN (?)', [monumentIds]);
 	} catch (error) {
@@ -207,110 +251,108 @@ const creerCircuit = async (req, res, next) => {
 				itineraire: monumentIds,
 			},
 		});
-		res.redirect('/acceuil');
 	} catch (error) {
 		return next(new HttpError("Création du circuit échouée.", 500));
 	}
 };
 
 const modifierCircuit = async (req, res, next) => {
-    const validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty()) {
-        return next(new HttpError("Données saisies invalides.", 422));
-    }
+	const validationErrors = validationResult(req);
 
-    const { id } = req.params;
-    const { nom, nbjours, ville_depart, ville_arrivee, itineraire } = req.body;
+	if (!validationErrors.isEmpty()) {
+		return next(new HttpError("Données saisies invalides.", 422));
+	}
 
-    if (!Array.isArray(itineraire) || itineraire.length === 0) {
-        return next(new HttpError("L'itinéraire doit contenir au moins un monument.", 422));
-    }
+	const { id } = req.params;
+	const { nom, nbjours, ville_depart, ville_arrivee, itineraire } = req.body;
 
-    // Convert monument IDs to numbers and validate
-    const monumentIds = itineraire.map((monumentId) => Number(monumentId));
-    const hasInvalidMonumentId = monumentIds.some(
-        (monumentId) => !Number.isInteger(monumentId) || monumentId <= 0
-    );
-    if (hasInvalidMonumentId) {
-        return next(new HttpError("L'itinéraire contient des identifiants de monuments invalides.", 422));
-    }
+	if (!Array.isArray(itineraire) || itineraire.length === 0) {
+		return next(new HttpError("L'itinéraire doit contenir au moins un monument.", 422));
+	}
 
-    // Check for duplicates
-    const seenIds = new Set();
-    for (const monumentId of monumentIds) {
-        if (seenIds.has(monumentId)) {
-            return next(new HttpError("Un monument ne peut pas être ajouté deux fois dans le même circuit.", 422));
-        }
-        seenIds.add(monumentId);
-    }
+	const monumentIds = itineraire.map((monumentId) => Number(monumentId));
+	const hasInvalidMonumentId = monumentIds.some(
+		(monumentId) => !Number.isInteger(monumentId) || monumentId <= 0
+	);
 
-    // Check if circuit exists
-    let circuits;
-    try {
-        circuits = await query('SELECT * FROM circuit WHERE id = ?', [id]);
-    } catch (err) {
-        return next(new HttpError("Erreur lors de la récupération du circuit.", 500));
-    }
+	if (hasInvalidMonumentId) {
+		return next(new HttpError("L'itinéraire contient des identifiants de monuments invalides.", 422));
+	}
 
-    if (!circuits[0]) {
-        return next(new HttpError("Circuit non trouvé.", 404));
-    }
+	const seenIds = new Set();
 
-    // Validate monuments exist
-    let monuments;
-    try {
-        monuments = await query('SELECT id FROM monument WHERE id IN (?)', [monumentIds]);
-    } catch (err) {
-        return next(new HttpError("Erreur lors de la validation des monuments.", 500));
-    }
+	for (const monumentId of monumentIds) {
+		if (seenIds.has(monumentId)) {
+			return next(new HttpError("Un monument ne peut pas être ajouté deux fois dans le même circuit.", 422));
+		}
 
-    if (monuments.length !== monumentIds.length) {
-        return next(new HttpError("Un ou plusieurs monuments de l'itinéraire sont introuvables.", 404));
-    }
+		seenIds.add(monumentId);
+	}
 
-    // Use transaction for atomic update
-    try {
-        await query('START TRANSACTION');
+	let circuits;
 
-        await query(
-            'UPDATE circuit SET nom = ?, nbjours = ?, ville_depart = ?, ville_arrivee = ? WHERE id = ?',
-            [nom, nbjours, ville_depart, ville_arrivee, id]
-        );
+	try {
+		circuits = await query('SELECT * FROM circuit WHERE id = ?', [id]);
+	} catch (error) {
+		return next(new HttpError("Erreur lors de la récupération du circuit.", 500));
+	}
 
-        await query('DELETE FROM circuit_monument WHERE circuit_id = ?', [id]);
+	if (!circuits[0]) {
+		return next(new HttpError("Circuit non trouvé.", 404));
+	}
 
-        for (let i = 0; i < monumentIds.length; i++) {
-            await query(
-                'INSERT INTO circuit_monument (circuit_id, monument_id, ordre) VALUES (?, ?, ?)',
-                [id, monumentIds[i], i + 1]
-            );
-        }
+	let monuments;
 
-        await query('COMMIT');
-    } catch (err) {
-        await query('ROLLBACK');
-        return next(new HttpError("Mise à jour du circuit échouée.", 500));
-    }
+	try {
+		monuments = await query('SELECT id FROM monument WHERE id IN (?)', [monumentIds]);
+	} catch (error) {
+		return next(new HttpError("Erreur lors de la validation des monuments.", 500));
+	}
 
-    res.json({
-        circuit: {
-            id: Number(id),
-            nom,
-            nbjours,
-            ville_depart,
-            ville_arrivee,
-            itineraire: monumentIds,
-        },
-    });
+	if (monuments.length !== monumentIds.length) {
+		return next(new HttpError("Un ou plusieurs monuments de l'itinéraire sont introuvables.", 404));
+	}
+
+	try {
+		await query('START TRANSACTION');
+
+		await query(
+			'UPDATE circuit SET nom = ?, nbjours = ?, ville_depart = ?, ville_arrivee = ? WHERE id = ?',
+			[nom, nbjours, ville_depart, ville_arrivee, id]
+		);
+
+		await query('DELETE FROM circuit_monument WHERE circuit_id = ?', [id]);
+
+		for (let index = 0; index < monumentIds.length; index++) {
+			await query(
+				'INSERT INTO circuit_monument (circuit_id, monument_id, ordre) VALUES (?, ?, ?)',
+				[id, monumentIds[index], index + 1]
+			);
+		}
+
+		await query('COMMIT');
+	} catch (error) {
+		await query('ROLLBACK');
+		return next(new HttpError("Mise à jour du circuit échouée.", 500));
+	}
+
+	res.json({
+		circuit: {
+			id: Number(id),
+			nom,
+			nbjours,
+			ville_depart,
+			ville_arrivee,
+			itineraire: monumentIds,
+		},
+	});
 };
-
-
-
 
 const supprimerCircuit = async (req, res, next) => {
 	const { id } = req.params;
 
 	let circuits;
+
 	try {
 		circuits = await query('SELECT * FROM circuit WHERE id = ?', [id]);
 	} catch (error) {

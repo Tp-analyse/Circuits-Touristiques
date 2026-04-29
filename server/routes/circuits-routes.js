@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get('/', circuitsController.getAllCircuits);
 router.get('/:id', circuitsController.getCircuitById);
+router.get('/', getCircuits);
 
 router.use(checkAuth);
 
