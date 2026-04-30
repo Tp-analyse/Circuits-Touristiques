@@ -8,6 +8,7 @@ import PayForm from "./pages/paiement/PayForm";
 import Logout from "./pages/logout/Logout";
 import { AuthContext } from "./context/auth-context";
 import InscriptionClient from "./pages/inscription/InscriptionClient";
+import EvaluationForm from "./pages/evaluation/EvaluationForm";
 
 function getExpirationToken(token) {
     try {
@@ -46,8 +47,9 @@ const routerLoggedIn = createBrowserRouter([
             { path: "/", element: <Navigate to="/accueil" /> },
             { path: "/login", element: <Navigate to="/accueil" /> },
             { path: "/accueil", element: <HomePage /> },
-            { path: "/deconnexion", element: <Logout /> },
-            { path: "/pay", element: <PayForm />}
+            { path: "/pay", element: <PayForm />},
+            { path: "/evaluation", element: <EvaluationForm /> },
+            { path: "/deconnexion", element: <Logout /> }
         ]
     }
 ]);

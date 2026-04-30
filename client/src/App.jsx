@@ -35,7 +35,7 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <Navigate to="/login" /> },
             { path: "login", element: <LoginForm /> },
-            { path: "deconnexion", element: <Navigate to="/login" /> },
+            { path: "deconnexion", element: <Navigate to="/login" /> }
         ],
     },
 ]);
@@ -55,7 +55,7 @@ const routerLogin = createBrowserRouter([
             { path: "circuits/:id/modifier", element: <ModifierCircuit /> },
             { path: "guides/nouveau", element: <FormulaireGuide /> },
             { path: "inscriptions", element: <GestionInscriptions /> },
-            { path: "deconnexion", element: <Deconnexion /> },
+            { path: "deconnexion", element: <Deconnexion /> }
         ],
     },
 ]);
