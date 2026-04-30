@@ -82,7 +82,7 @@ export default function ModifierCircuit() {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || "Assignation échouée.");
             setGuideAssigne(data.guide);
-            setSelectedGuideId("");
+            setSelectedGuideId(selectedGuideId);
             setMessage("Guide assigné avec succès.");
         } catch (error) {
             setMessage(error.message || "Assignation échouée.");

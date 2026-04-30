@@ -69,8 +69,14 @@ export default function PayForm() {
                         onApprove={async ({ orderId }) => {
                             await fetch(`/api/capture-order/${orderId}`, {
                                 method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": localStorage.getItem("token")
+                                },
+                                body: JSON.stringify({ circuitId: circuit.id })
                             });
                             console.log("Payment captured!");
+
                             alert("Paiement réussi !");
                             navigate("/accueil");
                         }}

@@ -1,4 +1,6 @@
 const { Client, Environment, OrdersController, LogLevel } = require("@paypal/paypal-server-sdk");
+const { query } = require('../util/bd');
+
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
@@ -54,6 +56,9 @@ const createOrder = async (req, res, next) => {
 
 const captureOrder = async (req, res, next) => {
   const { orderId } = req.params;
+  const { circuitId } = req.body;
+  const userId = req.userData ? req.userData.userId : null;
+
   try {
     const collect = {
       id: orderId,
@@ -63,7 +68,20 @@ const captureOrder = async (req, res, next) => {
     const { body, ...httpResponse } = await ordersController.captureOrder(collect);
     const responseData = typeof body === 'string' ? JSON.parse(body) : body;
     
+    if ((httpResponse.statusCode === 201 || httpResponse.statusCode === 200) && userId && circuitId) {
+        try {
+            await query(
+                'INSERT INTO client_circuit (client_id, circuit_id) VALUES (?, ?)',
+                [userId, circuitId]
+            );
+        } catch (dbError) {
+            console.error("Error saving circuit purchase:", dbError);
+            // We still return success for the payment, but log the error
+        }
+    }
+
     res.status(httpResponse.statusCode).json(responseData);
+
   } catch (error) {
     console.error("Error capturing order:", error);
     res.status(500).json({ error: "Failed to capture order", message: error.message });
