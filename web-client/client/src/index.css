@@ -13,7 +13,7 @@
 	--text-muted: #94a3b8;
 	--danger: #ef4444;
 	--success: #22c55e;
-	--radius: 6px;
+	--radius: 10px;
 	--radius-lg: 22px;
 	/* aliases for web-client components */
 	--primary: var(--blue);
@@ -271,13 +271,19 @@ form > p {
 
 button {
 	cursor: pointer;
-	border: none;
-	border-radius: var(--radius);
+	border: 1px solid transparent;
+	border-radius: 10px;
 	font-size: 0.95rem;
-	padding: 0.5rem 1.25rem;
-	transition: background-color 0.15s, transform 0.12s, box-shadow 0.15s;
+	font-weight: 600;
+	padding: 0.6rem 1.4rem;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	position: relative;
 	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	letter-spacing: 0.01em;
 }
 
 button::after {
@@ -298,22 +304,24 @@ button:active::after {
 }
 
 button:hover:not(:disabled) {
-	transform: translateY(-1px);
-	box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 button:active:not(:disabled) {
 	transform: translateY(0);
 	box-shadow: none;
+	filter: brightness(0.9);
 }
 
 button[type="submit"] {
-	background-color: var(--blue);
+	background: linear-gradient(135deg, var(--blue), var(--blue-hover));
 	color: #fff;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 button[type="submit"]:hover {
-	background-color: var(--blue-hover);
+	background: linear-gradient(135deg, var(--blue-light), var(--blue));
 }
 
 button[type="button"] {
@@ -324,23 +332,25 @@ button[type="button"] {
 
 button[type="button"]:hover {
 	background-color: var(--border);
+	border-color: var(--blue-light);
 	color: var(--text);
 }
 
 .btn-primary {
 	margin-top: 0.5rem;
-	padding: 0.9rem 1rem;
-	border: none;
-	border-radius: 8px;
-	background-color: var(--blue);
+	padding: 0.85rem 1.5rem;
+	border-radius: 10px;
+	background: linear-gradient(135deg, var(--blue), var(--blue-hover));
 	color: white;
 	font-size: 1rem;
+	font-weight: 600;
 	cursor: pointer;
 	width: 100%;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-primary:hover {
-	background-color: var(--blue-hover);
+	background: linear-gradient(135deg, var(--blue-light), var(--blue));
 }
 
 .form-actions {
