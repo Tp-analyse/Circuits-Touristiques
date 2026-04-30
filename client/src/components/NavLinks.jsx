@@ -29,6 +29,9 @@ export default function NavLinks() {
                         <NavLink to="/inscriptions">Gestion inscriptions</NavLink>
                     </li>
 					<li>
+						<NavLink to="/evaluations">Gestion évaluations</NavLink>
+					</li>
+					<li>
 						<NavLink to="/deconnexion">Déconnexion</NavLink>
 					</li>
 				</>

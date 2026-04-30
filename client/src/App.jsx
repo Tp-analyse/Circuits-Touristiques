@@ -12,6 +12,7 @@ import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
 import Acceuil from "./pages/Acceuil";
 import GestionInscriptions from "./pages/GestionInscriptions";
+import GestionEvaluations from "./pages/GestionEvaluations";
 
 function getExpirationToken(token) {
     try {
@@ -55,6 +56,7 @@ const routerLogin = createBrowserRouter([
             { path: "circuits/:id/modifier", element: <ModifierCircuit /> },
             { path: "guides/nouveau", element: <FormulaireGuide /> },
             { path: "inscriptions", element: <GestionInscriptions /> },
+            { path: "/evaluations", element: <GestionEvaluations /> },
             { path: "deconnexion", element: <Deconnexion /> }
         ],
     },
