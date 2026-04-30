@@ -12,7 +12,6 @@ const clientCircuitRoutes = require('./routes/client-circuit-routes');
 
 const app = express();
 
-app.use(express.json());
 app.use(cors());
 
 app.use((req, res, next) => {
@@ -21,9 +20,16 @@ app.use((req, res, next) => {
 		'Access-Control-Allow-Headers',
 		'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 	);
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+
+	if (req.method === 'OPTIONS') {
+		return res.sendStatus(200);
+	}
+
 	next();
 });
+
+app.use(express.json());
 
 app.use('/api/users', usersRoutes);
 app.use('/api/monuments', monumentsRoutes);
