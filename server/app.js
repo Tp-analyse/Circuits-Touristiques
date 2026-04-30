@@ -7,6 +7,7 @@ const usersRoutes = require('./routes/users-routes');
 const monumentsRoutes = require('./routes/monuments-routes');
 const circuitsRoutes = require('./routes/circuits-routes');
 const guidesRoutes = require('./routes/guides-routes');
+const paypalRoutes = require('./routes/paypal-routes');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/api/users', usersRoutes);
 app.use('/api/monuments', monumentsRoutes);
 app.use('/api/circuits', circuitsRoutes);
 app.use('/api/guides', guidesRoutes);
+app.use('/api', paypalRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Route non trouvée');
