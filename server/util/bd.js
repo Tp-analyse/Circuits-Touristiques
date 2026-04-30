@@ -117,6 +117,17 @@ const initDB = async () => {
         )
     `);
 
+    await query(`
+        CREATE TABLE IF NOT EXISTS client_circuit (
+            client_id INT NOT NULL,
+            circuit_id INT NOT NULL,
+            PRIMARY KEY (client_id, circuit_id),
+            CONSTRAINT fk_client_circuit_client FOREIGN KEY (client_id) REFERENCES client(clientId) ON DELETE CASCADE,
+            CONSTRAINT fk_client_circuit_circuit FOREIGN KEY (circuit_id) REFERENCES circuit(id) ON DELETE CASCADE
+        )
+    `);
+
+
     console.log('Tables MySQL initialisées');
 };
 

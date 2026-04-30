@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import RootLayout from "./pages/rootLayout/RootLayout";
 import LoginForm from "./pages/loginForm/LoginForm";
 import HomePage from "./pages/homepage/HomePage";
+import PayForm from "./Pages/paiement/PayForm";
 import Logout from "./pages/logout/Logout";
 import { AuthContext } from "./context/auth-context";
 import InscriptionClient from "./pages/inscription/InscriptionClient";
@@ -45,7 +46,8 @@ const routerLoggedIn = createBrowserRouter([
             { path: "/", element: <Navigate to="/accueil" /> },
             { path: "/login", element: <Navigate to="/accueil" /> },
             { path: "/accueil", element: <HomePage /> },
-            { path: "/deconnexion", element: <Logout /> }
+            { path: "/deconnexion", element: <Logout /> },
+            { path: "/pay", element: <PayForm />}
         ]
     }
 ]);
