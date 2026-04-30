@@ -1,14 +1,13 @@
 const express = require('express');
 const { body, check } = require('express-validator');
 const circuitsController = require('../controllers/circuits-controller');
-const guidesController = require('../controllers/guides-controller');
+const guidesController = require('../controllers/guides-controller.js');
 const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
 router.get('/', circuitsController.getAllCircuits);
 router.get('/:id', circuitsController.getCircuitById);
-router.get('/', getCircuits);
 
 router.use(checkAuth);
 

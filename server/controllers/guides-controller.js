@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const { query } = require('../util/bd');
 const HttpError = require('../util/http-error');
-import Guide from '../models/guide.js';
+const Guide = require('../models/guide.js');
 
 const getAllGuides = async (req, res, next) => {
     let guides;
@@ -108,9 +108,15 @@ const desassignerGuide = async (req, res, next) => {
     res.json({ message: "Guide désassigné avec succès." });
 };
 
-await Guide.insertMany([
-  { nom: 'Jean', email: 'jean@test.com', experience: 5 },
-  { nom: 'Marie', email: 'marie@test.com', experience: 3 }
-]);
+(async () => {
+    try {
+        await Guide.insertMany([
+            { nom: 'Jean', email: 'jean@test.com', experience: 5 },
+            { nom: 'Marie', email: 'marie@test.com', experience: 3 }
+        ]);
+    } catch (err) {
+        console.error("Erreur lors de l'insertion initiale des guides (MongoDB):", err);
+    }
+})();
 
 module.exports = { getAllGuides, creerGuide, supprimerGuide, assignerGuide, desassignerGuide };
