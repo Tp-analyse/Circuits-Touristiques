@@ -15,6 +15,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use((req, res, next) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader(
+		'Access-Control-Allow-Headers',
+		'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+	);
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+	next();
+});
+
 app.use('/api/users', usersRoutes);
 app.use('/api/monuments', monumentsRoutes);
 app.use('/api/circuits', circuitsRoutes);
@@ -23,9 +33,9 @@ app.use('/api', paypalRoutes);
 app.use('/api/inscriptions', clientCircuitRoutes);
 
 app.use((req, res, next) => {
-    const error = new Error('Route non trouvée');
-    error.statusCode = 404;
-    next(error);
+	const error = new Error('Route non trouvée');
+	error.statusCode = 404;
+	next(error);
 });
 
 app.use(errorHandler);
@@ -33,12 +43,12 @@ app.use(errorHandler);
 const port = process.env.PORT || 3000;
 
 initDB()
-    .then(() => populateDatabase())
-    .then(() => {
-        app.listen(port, () => {
-            console.log(`Serveur écoute au: http://localhost:${port}`);
-        });
-    })
-    .catch((err) => {
-        console.error('Erreur initialisation DB:', err);
-    });
+	.then(() => populateDatabase())
+	.then(() => {
+		app.listen(port, () => {
+			console.log(`Serveur écoute au: http://localhost:${port}`);
+		});
+	})
+	.catch((err) => {
+		console.error('Erreur initialisation DB:', err);
+	});
