@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const API_BASE_URL = "https://serveur-b0cxhcg0c4bsgyez.germanywestcentral-01.azurewebsites.net";
 
 function formatPrice(value) {
@@ -31,6 +31,7 @@ export default function HomePage() {
     const [circuits, setCircuits] = useState([]);
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
@@ -179,6 +180,13 @@ export default function HomePage() {
                                             <p className="empty-inline">Aucun monument dans cet itinéraire.</p>
                                         )}
                                     </div>
+
+                                    <button
+                                        className="btn-primary"
+                                        onClick={() => navigate("/pay", { state: { circuit } })}
+                                    >
+                                        Paiement
+                                    </button>
                                 </li>
                             ))}
                         </ul>
