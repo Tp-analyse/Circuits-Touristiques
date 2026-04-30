@@ -138,6 +138,20 @@ const initDB = async () => {
         )
     `);
 
+    await query(`
+        CREATE TABLE IF NOT EXISTS evaluation (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            circuit_id INT NOT NULL,
+            note INT NOT NULL,
+            commentaire TEXT NOT NULL,
+            date_evaluation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            CONSTRAINT fk_evaluation_circuit
+                FOREIGN KEY (circuit_id) REFERENCES circuit(id)
+                ON DELETE CASCADE
+        )
+    `);
+
     console.log('Tables MySQL initialisées');
 };
 
