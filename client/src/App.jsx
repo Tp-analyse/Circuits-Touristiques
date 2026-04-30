@@ -11,6 +11,7 @@ import ModifierMonument from "./pages/ModifierMonument";
 import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
 import Acceuil from "./pages/Acceuil";
+import GestionInscriptions from "./pages/GestionInscriptions";
 
 function getExpirationToken(token) {
     try {
@@ -53,6 +54,7 @@ const routerLogin = createBrowserRouter([
             { path: "circuits/nouveau", element: <FormulaireCircuit /> },
             { path: "circuits/:id/modifier", element: <ModifierCircuit /> },
             { path: "guides/nouveau", element: <FormulaireGuide /> },
+            { path: "inscriptions", element: <GestionInscriptions /> },
             { path: "deconnexion", element: <Deconnexion /> },
         ],
     },
