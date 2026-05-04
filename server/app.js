@@ -12,22 +12,12 @@ const clientCircuitRoutes = require('./routes/client-circuit-routes');
 
 const app = express();
 
-app.use(cors());
-
-app.use((req, res, next) => {
-	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader(
-		'Access-Control-Allow-Headers',
-		'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-	);
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-
-	if (req.method === 'OPTIONS') {
-		return res.sendStatus(200);
-	}
-
-	next();
-});
+app.use(cors({
+	origin: '*',
+	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+}));
+app.options('*', cors());
 
 app.use(express.json());
 
