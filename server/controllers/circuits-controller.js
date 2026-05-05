@@ -16,32 +16,43 @@ const getAllCircuits = async (req, res, next) => {
     } = req.query;
 
     let sql =
-      "SELECT id, nom, nbjours, ville_depart, ville_arrivee, nb_etoiles FROM circuit WHERE 1 = 1";
+      `SELECT circuit.id, circuit.nom, circuit.nbjours, circuit.ville_depart, circuit.ville_arrivee,
+              ROUND(AVG(evaluation.note), 1) AS nb_etoiles
+       FROM circuit
+       LEFT JOIN evaluation ON evaluation.circuit_id = circuit.id
+       WHERE 1 = 1`;
     let params = [];
 
     if (nom) {
-      sql += " AND nom LIKE ?";
+      sql += " AND circuit.nom LIKE ?";
       params.push("%" + nom + "%");
     }
 
     if (ville_depart) {
-      sql += " AND ville_depart LIKE ?";
+      sql += " AND circuit.ville_depart LIKE ?";
       params.push("%" + ville_depart + "%");
     }
 
     if (ville_arrivee) {
-      sql += " AND ville_arrivee LIKE ?";
+      sql += " AND circuit.ville_arrivee LIKE ?";
       params.push("%" + ville_arrivee + "%");
     }
 
     if (nbjoursMin) {
-      sql += " AND nbjours >= ?";
+      sql += " AND circuit.nbjours >= ?";
       params.push(Number(nbjoursMin));
     }
 
     if (nbjoursMax) {
-      sql += " AND nbjours <= ?";
+      sql += " AND circuit.nbjours <= ?";
       params.push(Number(nbjoursMax));
+    }
+
+    sql += " GROUP BY circuit.id, circuit.nom, circuit.nbjours, circuit.ville_depart, circuit.ville_arrivee";
+
+    if (nb_etoiles) {
+      sql += " HAVING nb_etoiles >= ?";
+      params.push(Number(nb_etoiles));
     }
 
     circuits = await query(sql, params);
@@ -141,7 +152,12 @@ const getCircuitById = async (req, res, next) => {
 
   try {
     circuits = await query(
-      "SELECT id, nom, nbjours, ville_depart, ville_arrivee, nb_etoiles FROM circuit WHERE id = ?",
+      `SELECT circuit.id, circuit.nom, circuit.nbjours, circuit.ville_depart, circuit.ville_arrivee,
+              ROUND(AVG(evaluation.note), 1) AS nb_etoiles
+       FROM circuit
+       LEFT JOIN evaluation ON evaluation.circuit_id = circuit.id
+       WHERE circuit.id = ?
+       GROUP BY circuit.id, circuit.nom, circuit.nbjours, circuit.ville_depart, circuit.ville_arrivee`,
       [id],
     );
   } catch (error) {
@@ -203,8 +219,7 @@ const creerCircuit = async (req, res, next) => {
     return next(new HttpError("Données saisies invalides.", 422));
   }
 
-  const { nom, nbjours, ville_depart, ville_arrivee, nb_etoiles, itineraire } =
-    req.body;
+  const { nom, nbjours, ville_depart, ville_arrivee, itineraire } = req.body;
 
   if (!Array.isArray(itineraire) || itineraire.length === 0) {
     return next(
@@ -270,8 +285,8 @@ const creerCircuit = async (req, res, next) => {
 
   try {
     const circuitResult = await query(
-      "INSERT INTO circuit (nom, nbjours, ville_depart, ville_arrivee, nb_etoiles) VALUES (?, ?, ?, ?, ?)",
-      [nom, nbjours, ville_depart, ville_arrivee, nb_etoiles],
+      "INSERT INTO circuit (nom, nbjours, ville_depart, ville_arrivee) VALUES (?, ?, ?, ?)",
+      [nom, nbjours, ville_depart, ville_arrivee],
     );
 
     const circuitId = circuitResult.insertId;
@@ -295,7 +310,6 @@ const creerCircuit = async (req, res, next) => {
         nbjours,
         ville_depart,
         ville_arrivee,
-        nb_etoiles,
         itineraire: monumentIds,
       },
     });
@@ -312,8 +326,7 @@ const modifierCircuit = async (req, res, next) => {
   }
 
   const { id } = req.params;
-  const { nom, nbjours, ville_depart, ville_arrivee, nb_etoiles, itineraire } =
-    req.body;
+  const { nom, nbjours, ville_depart, ville_arrivee, itineraire } = req.body;
 
   if (!Array.isArray(itineraire) || itineraire.length === 0) {
     return next(
@@ -354,7 +367,7 @@ const modifierCircuit = async (req, res, next) => {
 
   try {
     circuits = await query(
-      "SELECT id, nom, nbjours, ville_depart, ville_arrivee, nb_etoiles FROM circuit WHERE id = ?",
+      "SELECT id FROM circuit WHERE id = ?",
       [id],
     );
   } catch (error) {
@@ -392,8 +405,8 @@ const modifierCircuit = async (req, res, next) => {
     await query("START TRANSACTION");
 
     await query(
-      "UPDATE circuit SET nom = ?, nbjours = ?, ville_depart = ?, ville_arrivee = ?, nb_etoiles = ? WHERE id = ?",
-      [nom, nbjours, ville_depart, ville_arrivee, nb_etoiles, id],
+      "UPDATE circuit SET nom = ?, nbjours = ?, ville_depart = ?, ville_arrivee = ? WHERE id = ?",
+      [nom, nbjours, ville_depart, ville_arrivee, id],
     );
 
     await query("DELETE FROM circuit_monument WHERE circuit_id = ?", [id]);
@@ -418,7 +431,6 @@ const modifierCircuit = async (req, res, next) => {
       nbjours,
       ville_depart,
       ville_arrivee,
-	  nb_etoiles,
       itineraire: monumentIds,
     },
   });
@@ -431,7 +443,7 @@ const supprimerCircuit = async (req, res, next) => {
 
   try {
     circuits = await query(
-      "SELECT id, nom, nbjours, ville_depart, ville_arrivee, nb_etoiles FROM circuit WHERE id = ?",
+      "SELECT id FROM circuit WHERE id = ?",
       [id],
     );
   } catch (error) {
