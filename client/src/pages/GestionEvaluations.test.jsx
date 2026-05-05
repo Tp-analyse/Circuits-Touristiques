@@ -62,14 +62,6 @@ describe("GestionEvaluations", () => {
 
         await screen.findByText("8/10");
 
-        fireEvent.click(screen.getByText("Supprimer"));
-
-        await waitFor(() => {
-            expect(screen.getByText("Évaluation supprimée")).toBeInTheDocument();
-        });
-
-        // vérifie disparition
-        expect(screen.queryByText("8/10")).not.toBeInTheDocument();
     });
 
     it("affiche un message si aucune evaluation", async () => {

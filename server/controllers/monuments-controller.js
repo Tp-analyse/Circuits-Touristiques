@@ -47,7 +47,7 @@ const creerMonument = async (req, res, next) => {
         return next(new HttpError("Création du monument échouée.", 500));
     }
 
-    res.status(201).json({ monument: { id: result.insertId, nom, date_construction, resume_histoire, prix, nb_etoiles: 0 } });
+    res.status(201).json({ monument: { id: result.insertId, nom, date_construction, resume_histoire, prix} });
 };
 
 const modifierMonument = async (req, res, next) => {
@@ -57,7 +57,7 @@ const modifierMonument = async (req, res, next) => {
     }
 
     const { id } = req.params;
-    const { nom, date_construction, resume_histoire, prix, nb_etoiles } = req.body;
+    const { nom, date_construction, resume_histoire, prix } = req.body;
 
     let monuments;
     try {
@@ -72,14 +72,14 @@ const modifierMonument = async (req, res, next) => {
 
     try {
         await query(
-            'UPDATE monument SET nom=?, date_construction=?, resume_histoire=?, prix=?, nb_etoiles=? WHERE id=?',
-            [nom, date_construction, resume_histoire, prix, nb_etoiles, id]
+            'UPDATE monument SET nom=?, date_construction=?, resume_histoire=?, prix=?',
+            [nom, date_construction, resume_histoire, prix]
         );
     } catch (error) {
         return next(new HttpError("Mise à jour échouée.", 500));
     }
 
-    res.json({ monument: { id: Number(id), nom, date_construction, resume_histoire, prix, nb_etoiles } });
+    res.json({ monument: { id: Number(id), nom, date_construction, resume_histoire, prix } });
 };
 
 const supprimerMonument = async (req, res, next) => {
