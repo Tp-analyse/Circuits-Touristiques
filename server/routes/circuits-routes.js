@@ -7,6 +7,9 @@ const checkAuth = require('../middleware/check-auth');
 const router = express.Router();
 
 router.get('/', circuitsController.getAllCircuits);
+
+router.get('/subscribed', checkAuth, circuitsController.getSubscribedCircuits);
+
 router.get('/:id', circuitsController.getCircuitById);
 
 router.use(checkAuth);

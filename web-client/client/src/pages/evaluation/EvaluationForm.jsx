@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const API_BASE = "http://localhost:3000";
 
@@ -7,6 +7,30 @@ export default function EvaluationForm() {
     const [note, setNote] = useState("");
     const [commentaire, setCommentaire] = useState("");
     const [message, setMessage] = useState("");
+    const [circuits, setCircuits] = useState([]);
+    const [loadingCircuits, setLoadingCircuits] = useState(true);
+
+    useEffect(() => {
+        const fetchSubscribedCircuits = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/api/circuits/subscribed`, {
+                    headers: {
+                        Authorization: localStorage.getItem("token") || "",
+                    },
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setCircuits(data.circuits || []);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoadingCircuits(false);
+            }
+        };
+
+        fetchSubscribedCircuits();
+    }, []);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -63,16 +87,28 @@ export default function EvaluationForm() {
 
     return (
         <div style={{ padding: "20px" }}>
-            <h2>Évaluation d’un circuit</h2>
+            <h2>Évaluation d'un circuit</h2>
 
             <form onSubmit={submitHandler}>
                 <div>
-                    <label>ID du circuit</label>
-                    <input
-                        type="number"
-                        value={circuitId}
-                        onChange={(e) => setCircuitId(e.target.value)}
-                    />
+                    <label>Circuit</label>
+                    {loadingCircuits ? (
+                        <p>Chargement des circuits...</p>
+                    ) : circuits.length === 0 ? (
+                        <p>Vous n'êtes inscrit à aucun circuit.</p>
+                    ) : (
+                        <select
+                            value={circuitId}
+                            onChange={(e) => setCircuitId(e.target.value)}
+                        >
+                            <option value="">-- Sélectionnez un circuit --</option>
+                            {circuits.map((circuit) => (
+                                <option key={circuit.id} value={circuit.id}>
+                                    {circuit.nom}
+                                </option>
+                            ))}
+                        </select>
+                    )}
                 </div>
 
                 <div>
@@ -94,7 +130,7 @@ export default function EvaluationForm() {
                     />
                 </div>
 
-                <button type="submit">Envoyer</button>
+                <button type="submit" disabled={circuits.length === 0}>Envoyer</button>
             </form>
 
             {message && <p>{message}</p>}
