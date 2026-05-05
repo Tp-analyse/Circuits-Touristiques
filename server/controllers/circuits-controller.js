@@ -372,9 +372,30 @@ const supprimerCircuit = async (req, res, next) => {
 	res.json({ message: "Circuit supprimé avec succès." });
 };
 
+const getSubscribedCircuits = async (req, res, next) => {
+	const userId = req.userData.userId;
+
+	let circuits;
+
+	try {
+		circuits = await query(
+			`SELECT circuit.id, circuit.nom
+             FROM client_circuit
+             INNER JOIN circuit ON circuit.id = client_circuit.circuit_id
+             WHERE client_circuit.client_id = ?`,
+			[userId]
+		);
+	} catch (error) {
+		return next(new HttpError("Erreur lors de la récupération des circuits.", 500));
+	}
+
+	res.json({ circuits });
+};
+
 module.exports = {
 	getAllCircuits,
 	getCircuitById,
+	getSubscribedCircuits,
 	creerCircuit,
 	modifierCircuit,
 	supprimerCircuit,
