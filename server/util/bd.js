@@ -141,6 +141,7 @@ const initDB = async () => {
         CREATE TABLE IF NOT EXISTS evaluation (
             id INT AUTO_INCREMENT PRIMARY KEY,
             circuit_id INT NOT NULL,
+            client_id INT,
             note INT NOT NULL,
             commentaire TEXT NOT NULL,
             date_evaluation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -150,6 +151,12 @@ const initDB = async () => {
                 ON DELETE CASCADE
         )
     `);
+
+    try {
+        await query(`ALTER TABLE evaluation ADD COLUMN client_id INT`);
+    } catch (e) {
+        // column already exists
+    }
 
     console.log('Tables MySQL initialisées');
 };
