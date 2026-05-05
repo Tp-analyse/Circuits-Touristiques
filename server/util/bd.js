@@ -27,11 +27,11 @@ const inApp = process.env.MYSQLCONNSTR_localdb
     : null;
 
 const pool = mysql.createPool({
-    host:     inApp ? inApp.host     : (process.env.DB_HOST     || 'localhost'),
-    user:     inApp ? inApp.user     : (process.env.DB_USER     || 'data'),
+    host: inApp ? inApp.host : (process.env.DB_HOST || 'localhost'),
+    user: inApp ? inApp.user : (process.env.DB_USER || 'data'),
     password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
-    database: inApp ? inApp.database : (process.env.DB_NAME     || 'gestionProduit'),
-    port:     inApp ? inApp.port     : (Number(process.env.DB_PORT) || 3306),
+    database: inApp ? inApp.database : (process.env.DB_NAME || 'gestionProduit'),
+    port: inApp ? inApp.port : (Number(process.env.DB_PORT) || 3306),
     ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
         ? { rejectUnauthorized: false }
         : false,
@@ -47,7 +47,6 @@ const query = (sql, params = []) => {
 };
 
 const initDB = async () => {
-
     await query(`
         CREATE TABLE IF NOT EXISTS client (
             clientId INT AUTO_INCREMENT PRIMARY KEY,
