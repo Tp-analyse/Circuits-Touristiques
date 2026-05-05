@@ -4,15 +4,34 @@ import { API_BASE } from "../config/api";
 function GestionEvaluations() {
     const [evaluations, setEvaluations] = useState([]);
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const fetchEvaluations = async () => {
         try {
+            setLoading(true);
+            setMessage("");
+
             const res = await fetch(`${API_BASE}/api/evaluations`);
             const data = await res.json();
-            setEvaluations(data);
+
+            console.log("DATA API:", data);
+
+            // 🔒 Sécurisation du format
+            if (Array.isArray(data)) {
+                setEvaluations(data);
+            } else if (Array.isArray(data.evaluations)) {
+                setEvaluations(data.evaluations);
+            } else {
+                setEvaluations([]);
+                setMessage("Format de données invalide");
+            }
+
         } catch (err) {
             console.error(err);
             setMessage("Erreur chargement évaluations");
+            setEvaluations([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -35,6 +54,7 @@ function GestionEvaluations() {
 
             setMessage("Évaluation supprimée");
             fetchEvaluations();
+
         } catch (err) {
             console.error(err);
             setMessage("Erreur serveur");
@@ -45,9 +65,11 @@ function GestionEvaluations() {
         <div style={{ padding: "20px" }}>
             <h2>Gestion des évaluations</h2>
 
-            {message && <p>{message}</p>}
+            {message && <p style={{ color: "red" }}>{message}</p>}
 
-            {evaluations.length === 0 ? (
+            {loading ? (
+                <p>Chargement...</p>
+            ) : !Array.isArray(evaluations) || evaluations.length === 0 ? (
                 <p>Aucune évaluation</p>
             ) : (
                 <table border="1" cellPadding="10">
