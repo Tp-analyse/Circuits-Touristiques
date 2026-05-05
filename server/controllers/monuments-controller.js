@@ -97,10 +97,8 @@ const supprimerMonument = async (req, res, next) => {
     }
 
     try {
-        // First delete from circuit_monument where monument_id = id
         await query('DELETE FROM circuit_monument WHERE monument_id = ?', [id]);
 
-        // Then delete from monument
         await query('DELETE FROM monument WHERE id = ?', [id]);
     } catch (error) {
         return next(new HttpError("Suppression échouée.", 500));

@@ -42,11 +42,8 @@ const createOrder = async (req, res, next) => {
 
     const { body, ...httpResponse } = await ordersController.createOrder(collect);
     
-    // In SDK v2+, body is already a string if it's the raw response, or an object if parsed.
-    // The latest SDK usually returns an object.
     const responseData = typeof body === 'string' ? JSON.parse(body) : body;
     
-    // The frontend expects { orderId } or { id }
     res.status(httpResponse.statusCode).json({ orderId: responseData.id, ...responseData });
   } catch (error) {
     console.error("Error creating order:", error);
@@ -76,7 +73,6 @@ const captureOrder = async (req, res, next) => {
             );
         } catch (dbError) {
             console.error("Error saving circuit purchase:", dbError);
-            // We still return success for the payment, but log the error
         }
     }
 
