@@ -26,9 +26,6 @@ export default function NavLinks() {
 						<NavLink to="/guides/nouveau">Nouveau guide</NavLink>
 					</li>
 					<li>
-                        <NavLink to="/inscriptions">Gestion inscriptions</NavLink>
-                    </li>
-					<li>
 						<NavLink to="/evaluations">Gestion évaluations</NavLink>
 					</li>
 					<li>

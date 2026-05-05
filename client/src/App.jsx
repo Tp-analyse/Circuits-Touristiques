@@ -54,7 +54,6 @@ const routerLogin = createBrowserRouter([
             { path: "circuits/nouveau", element: <FormulaireCircuit /> },
             { path: "circuits/:id/modifier", element: <ModifierCircuit /> },
             { path: "guides/nouveau", element: <FormulaireGuide /> },
-            { path: "inscriptions", element: <GestionInscriptions /> },
             { path: "/evaluations", element: <GestionEvaluations /> },
             { path: "deconnexion", element: <Deconnexion /> }
         ],
