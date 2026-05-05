@@ -11,7 +11,6 @@ import ModifierMonument from "./pages/ModifierMonument";
 import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
 import Acceuil from "./pages/Acceuil";
-import GestionInscriptions from "./pages/GestionInscriptions";
 import GestionEvaluations from "./pages/GestionEvaluations";
 
 function getExpirationToken(token) {
