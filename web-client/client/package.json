@@ -14,8 +14,6 @@
   "dependencies": {
     "@paypal/react-paypal-js": "^9.2.0",
     "axios": "^1.15.1",
-    "express": "^5.2.1",
-    "mysql": "^2.18.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.14.1"

@@ -63,8 +63,7 @@ const initDB = async () => {
             nom VARCHAR(100) NOT NULL,
             date_construction DATE NOT NULL,
             resume_histoire TEXT NOT NULL,
-            prix DECIMAL(10,2) NOT NULL,
-            nb_etoiles INT NOT NULL DEFAULT 0
+            prix DECIMAL(10,2) NOT NULL
         )
     `);
 
@@ -74,7 +73,8 @@ const initDB = async () => {
             nom VARCHAR(100) NOT NULL,
             nbjours INT NOT NULL,
             ville_depart VARCHAR(100) NOT NULL,
-            ville_arrivee VARCHAR(100) NOT NULL
+            ville_arrivee VARCHAR(100) NOT NULL,
+            nb_etoiles INT NOT NULL DEFAULT 0
         )
     `);
 
@@ -178,22 +178,22 @@ const populateDatabase = async () => {
     // Insert monuments if none exist
     const monuments = await query('SELECT COUNT(*) AS count FROM monument');
     if (monuments[0].count === 0) {
-        const sql = 'INSERT INTO monument (nom, date_construction, resume_histoire, prix, nb_etoiles) VALUES (?, ?, ?, ?, ?)';
-        await query(sql, ['Tour Eiffel', '1889-05-06', "Monument emblématique de Paris construit par Gustave Eiffel pour l'Exposition Universelle.", 25.00, 5]);
-        await query(sql, ['Colisée', '0080-06-01', "Amphithéâtre romain pouvant accueillir jusqu'à 80 000 spectateurs.", 16.00, 4]);
-        await query(sql, ['Sagrada Família', '1882-03-19', "Basilique catholique conçue par Antoni Gaudí, toujours en construction.", 26.00, 5]);
-        await query(sql, ['Stonehenge', '03000-01-01', "Site préhistorique célèbre en Angleterre, constitué de pierres dressées.", 12.00, 3]);
-        await query(sql, ['Château de Versailles', '1682-05-06', "Palais royal français célèbre pour ses jardins et son architecture.", 30.00, 5]);
+        const sql = 'INSERT INTO monument (nom, date_construction, resume_histoire, prix, nb_etoiles) VALUES (?, ?, ?, ?)';
+        await query(sql, ['Tour Eiffel', '1889-05-06', "Monument emblématique de Paris construit par Gustave Eiffel pour l'Exposition Universelle.", 25.00]);
+        await query(sql, ['Colisée', '0080-06-01', "Amphithéâtre romain pouvant accueillir jusqu'à 80 000 spectateurs.", 16.00]);
+        await query(sql, ['Sagrada Família', '1882-03-19', "Basilique catholique conçue par Antoni Gaudí, toujours en construction.", 26.00]);
+        await query(sql, ['Stonehenge', '03000-01-01', "Site préhistorique célèbre en Angleterre, constitué de pierres dressées.", 12.00]);
+        await query(sql, ['Château de Versailles', '1682-05-06', "Palais royal français célèbre pour ses jardins et son architecture.", 30.00]);
         console.log('Monuments exemples insérés');
     }
 
     // Insert circuits if none exist
     const circuits = await query('SELECT COUNT(*) AS count FROM circuit');
     if (circuits[0].count === 0) {
-        const sql = 'INSERT INTO circuit (nom, nbjours, ville_depart, ville_arrivee) VALUES (?, ?, ?, ?)';
-        await query(sql, ['Circuit Paris Historique', 3, 'Paris', 'Paris']);
-        await query(sql, ['Tour des Monuments Romains', 5, 'Rome', 'Rome']);
-        await query(sql, ['Découverte de la Catalogne', 4, 'Barcelone', 'Barcelone']);
+        const sql = 'INSERT INTO circuit (nom, nbjours, ville_depart, ville_arrivee) VALUES (?, ?, ?, ?, ?)';
+        await query(sql, ['Circuit Paris Historique', 3, 'Paris', 'Paris', 1]);
+        await query(sql, ['Tour des Monuments Romains', 5, 'Rome', 'Rome', 3]);
+        await query(sql, ['Découverte de la Catalogne', 4, 'Barcelone', 'Barcelone', 10]);
         console.log('Circuits exemples insérés');
     }
 
