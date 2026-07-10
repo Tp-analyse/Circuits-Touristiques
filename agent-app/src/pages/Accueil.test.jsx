@@ -2,10 +2,10 @@ import { render, screen, fireEvent, waitFor, within } from "@testing-library/rea
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import Acceuil from "./Acceuil";
+import Accueil from "./Accueil";
 import { API_BASE } from "../config/api";
 
-describe("Acceuil", () => {
+describe("Accueil", () => {
 	const getItemMock = vi.fn();
 
 	beforeEach(() => {
@@ -77,7 +77,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 
@@ -99,7 +99,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 
@@ -126,7 +126,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 
@@ -148,7 +148,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 
@@ -171,7 +171,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 
@@ -198,7 +198,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 
@@ -220,7 +220,7 @@ describe("Acceuil", () => {
 
 		render(
 			<MemoryRouter>
-				<Acceuil />
+				<Accueil />
 			</MemoryRouter>
 		);
 

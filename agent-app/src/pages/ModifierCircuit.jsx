@@ -223,7 +223,7 @@ export default function ModifierCircuit() {
                 throw new Error(data.message || "La modification du circuit a echoue.");
             }
 
-            navigate("/acceuil");
+            navigate("/accueil");
         } catch (error) {
             setMessage(error.message || "La modification du circuit a echoue.");
         }

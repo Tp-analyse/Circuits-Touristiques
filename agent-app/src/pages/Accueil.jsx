@@ -51,7 +51,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
 	);
 }
 
-export default function Acceuil() {
+export default function Accueil() {
 	const [monuments, setMonuments] = useState([]);
 	const [circuits, setCircuits] = useState([]);
 	const [message, setMessage] = useState("");

@@ -100,7 +100,7 @@ export default function ModifierMonument() {
                 throw new Error(data.message || "La modification du monument a echoue.");
             }
 
-            navigate("/acceuil");
+            navigate("/accueil");
         } catch (error) {
             setMessage(error.message || "La modification du monument a echoue.");
         }

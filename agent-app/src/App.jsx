@@ -10,7 +10,7 @@ import FormulaireGuide from "./pages/FormulaireGuide";
 import ModifierMonument from "./pages/ModifierMonument";
 import ModifierCircuit from "./pages/ModifierCircuit";
 import { AuthContext } from "./context/auth-context";
-import Acceuil from "./pages/Acceuil";
+import Accueil from "./pages/Accueil";
 import GestionEvaluations from "./pages/GestionEvaluations";
 
 function getExpirationToken(token) {
@@ -45,10 +45,10 @@ const routerLogin = createBrowserRouter([
         path: "/",
         element: <RootLayout />,
         children: [
-            { index: true, element: <Navigate to="/acceuil" /> },
-            { path: "login", element: <Navigate to="/acceuil" /> },
-            { path: "acceuil", element: <Acceuil /> },
-            { path: "monuments/actuel", element: <Acceuil /> },
+            { index: true, element: <Navigate to="/accueil" /> },
+            { path: "login", element: <Navigate to="/accueil" /> },
+            { path: "accueil", element: <Accueil /> },
+            { path: "monuments/actuel", element: <Accueil /> },
             { path: "monuments/nouveau", element: <FormulaireMonument /> },
             { path: "monuments/:id/modifier", element: <ModifierMonument /> },
             { path: "circuits/nouveau", element: <FormulaireCircuit /> },

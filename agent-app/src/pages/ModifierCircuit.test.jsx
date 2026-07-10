@@ -153,7 +153,7 @@ describe("ModifierCircuit", () => {
 			});
 		});
 
-		expect(mockNavigate).toHaveBeenCalledWith("/acceuil");
+		expect(mockNavigate).toHaveBeenCalledWith("/accueil");
 	});
 
 	it("affiche le message du backend si la modification echoue", async () => {
