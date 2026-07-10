@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const { query } = require('../util/bd');
 const HttpError = require('../util/http-error');
-const Guide = require('../models/guide.js');
+const Guide = require('../models/guide-model');
 
 const getAllGuides = async (req, res, next) => {
     let guides;

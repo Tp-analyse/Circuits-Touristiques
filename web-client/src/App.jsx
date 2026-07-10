@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 
 import RootLayout from "./pages/rootLayout/RootLayout";
 import LoginForm from "./pages/loginForm/LoginForm";
-import HomePage from "./pages/homepage/HomePage";
+import HomePage from "./pages/homePage/HomePage";
 import PayForm from "./pages/paiement/PayForm";
 import Logout from "./pages/logout/Logout";
 import { AuthContext } from "./context/auth-context";
