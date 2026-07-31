@@ -1,6 +1,7 @@
 // Visualization des données sur azure: https://serveur-b0cxhcg0c4bsgyez.scm.germanywestcentral-01.azurewebsites.net/phpmyadmin
 
 const mysql = require('mysql');
+const bcrypt = require('bcryptjs');
 
 function parseInAppConnStr(connStr) {
     const map = {};
@@ -166,12 +167,10 @@ const populateDatabase = async () => {
     // Insert clients if none exist
     const clients = await query('SELECT COUNT(*) AS count FROM client');
     if (clients[0].count === 0) {
-        await query(`
-            INSERT INTO client (numTelephone, email, nomPrenom, password) VALUES
-            ('+1234567890', 'alice@example.com', 'Alice Tremblay', 'pass1234'),
-            ('+1987654321', 'bob@example.com', 'Bob Martin', 'motdepasse'),
-            ('+1122334455', 'carol@example.com', 'Carol Dupont', 'secret99')
-        `);
+        const sql = 'INSERT INTO client (numTelephone, email, nomPrenom, password) VALUES (?, ?, ?, ?)';
+        await query(sql, ['+1234567890', 'alice@example.com', 'Alice Tremblay', await bcrypt.hash('pass1234', 12)]);
+        await query(sql, ['+1987654321', 'bob@example.com', 'Bob Martin', await bcrypt.hash('motdepasse', 12)]);
+        await query(sql, ['+1122334455', 'carol@example.com', 'Carol Dupont', await bcrypt.hash('secret99', 12)]);
         console.log('Clients exemples insérés');
     }
 

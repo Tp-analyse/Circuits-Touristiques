@@ -1,4 +1,5 @@
 const { Client, Environment, OrdersController, LogLevel } = require("@paypal/paypal-server-sdk");
+const { validationResult } = require('express-validator');
 const { query } = require('../util/bd');
 
 
@@ -18,11 +19,11 @@ const client = new Client({
 const ordersController = new OrdersController(client);
 
 const createOrder = async (req, res, next) => {
-  const { amount } = req.body;
-  
-  if (!amount) {
-    return res.status(400).json({ error: "Amount is required" });
+  if (!validationResult(req).isEmpty()) {
+    return res.status(400).json({ error: "Amount must be a positive number" });
   }
+
+  const { amount } = req.body;
 
   try {
     const collect = {
@@ -52,6 +53,10 @@ const createOrder = async (req, res, next) => {
 };
 
 const captureOrder = async (req, res, next) => {
+  if (!validationResult(req).isEmpty()) {
+    return res.status(400).json({ error: "Invalid circuitId" });
+  }
+
   const { orderId } = req.params;
   const { circuitId } = req.body;
   const userId = req.userData ? req.userData.userId : null;

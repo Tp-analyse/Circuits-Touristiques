@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { query } = require('../util/bd');
 const HttpError = require('../util/http-error');
@@ -19,8 +20,18 @@ const connexion = async (req, res, next) => {
     }
 
     const client = clients[0];
+    if (!client) {
+        return next(new HttpError("Email ou mot de passe incorrect.", 401));
+    }
 
-    if (!client || client.password !== password) {
+    let passwordValide;
+    try {
+        passwordValide = await bcrypt.compare(password, client.password);
+    } catch (error) {
+        return next(new HttpError("Connexion échouée, veuillez réessayer.", 500));
+    }
+
+    if (!passwordValide) {
         return next(new HttpError("Email ou mot de passe incorrect.", 401));
     }
 
@@ -53,9 +64,10 @@ const inscription = async (req, res, next) => {
     }
 
     try {
+        const hash = await bcrypt.hash(password, 12);
         await query(
             'INSERT INTO client (numTelephone, email, nomPrenom, password) VALUES (?, ?, ?, ?)',
-            [telephone, email, `${prenom} ${nom}`, password]
+            [telephone, email, `${prenom} ${nom}`, hash]
         );
     } catch (error) {
         return next(new HttpError("Inscription échouée, veuillez réessayer.", 500));

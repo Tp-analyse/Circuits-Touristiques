@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const { query } = require('../util/bd');
 const HttpError = require('../util/http-error');
 
@@ -14,17 +15,14 @@ const getEvaluations = async (req, res, next) => {
 };
 
 const creerEvaluation = async (req, res, next) => {
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+        return next(new HttpError("Données invalides: la note doit être un entier entre 0 et 10 et tous les champs sont obligatoires.", 422));
+    }
+
     const { circuitId, note, commentaire } = req.body;
     const clientId = req.userData.userId;
-
-    if (!circuitId || note === undefined || !commentaire) {
-        return next(new HttpError("Tous les champs sont obligatoires.", 422));
-    }
-
     const noteNumber = Number(note);
-    if (noteNumber < 0 || noteNumber > 10) {
-        return next(new HttpError("La note doit être entre 0 et 10.", 422));
-    }
 
     let circuits;
     try {

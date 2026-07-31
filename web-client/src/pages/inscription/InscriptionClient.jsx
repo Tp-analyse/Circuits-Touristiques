@@ -74,6 +74,11 @@ export default function InscriptionClient() {
             return;
         }
 
+        if (motDePasse.length < 8) {
+            setMessage("Le mot de passe doit contenir au moins 8 caractères.");
+            return;
+        }
+
         try {
             const response = await fetch(
                 `${API_BASE_URL}/api/users/inscription`,
