@@ -6,6 +6,7 @@ import {
   PayPalProvider,
   PayPalOneTimePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
+import { API_BASE } from "../config/api";
 
 export default function PayForm() {
     const location = useLocation();
@@ -53,7 +54,7 @@ export default function PayForm() {
                 <div className="paypal-button-container">
                     <PayPalOneTimePaymentButton
                         createOrder={async () => {
-                            const response = await fetch("/api/create-order", {
+                            const response = await fetch(`${API_BASE}/api/create-order`, {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -67,7 +68,7 @@ export default function PayForm() {
                             return { orderId };
                         }}
                         onApprove={async ({ orderId }) => {
-                            await fetch(`/api/capture-order/${orderId}`, {
+                            await fetch(`${API_BASE}/api/capture-order/${orderId}`, {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",

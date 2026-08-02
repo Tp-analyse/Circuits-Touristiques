@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import LoginForm from "./LoginForm";
-import { AuthContext } from "../../context/auth-context";
+import { AuthContext } from "../context/auth-context";
 
 const mockedNavigate = vi.fn();
 

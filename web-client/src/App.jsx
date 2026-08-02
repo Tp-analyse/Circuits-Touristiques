@@ -1,14 +1,14 @@
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
-import RootLayout from "./pages/rootLayout/RootLayout";
-import LoginForm from "./pages/loginForm/LoginForm";
-import HomePage from "./pages/homePage/HomePage";
-import PayForm from "./pages/paiement/PayForm";
-import Logout from "./pages/logout/Logout";
+import RootLayout from "./pages/RootLayout";
+import LoginForm from "./pages/LoginForm";
+import HomePage from "./pages/HomePage";
+import PayForm from "./pages/PayForm";
+import Logout from "./pages/Logout";
 import { AuthContext } from "./context/auth-context";
-import InscriptionClient from "./pages/inscription/InscriptionClient";
-import EvaluationForm from "./pages/evaluation/EvaluationForm";
+import InscriptionClient from "./pages/InscriptionClient";
+import EvaluationForm from "./pages/EvaluationForm";
 
 function getExpirationToken(token) {
     try {

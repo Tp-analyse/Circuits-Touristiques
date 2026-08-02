@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const API_BASE_URL = "https://serveur-b0cxhcg0c4bsgyez.germanywestcentral-01.azurewebsites.net";
+import { API_BASE } from "../config/api";
 
 const EMPTY_FORM = {
     nom: "",
@@ -81,7 +80,7 @@ export default function InscriptionClient() {
 
         try {
             const response = await fetch(
-                `${API_BASE_URL}/api/users/inscription`,
+                `${API_BASE}/api/users/inscription`,
                 {
                     method: "POST",
                     headers: {

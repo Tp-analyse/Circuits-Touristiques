@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = "https://serveur-b0cxhcg0c4bsgyez.germanywestcentral-01.azurewebsites.net";
+import { API_BASE } from "../config/api";
 
 function formatPrice(value) {
     return `${Number(value || 0).toFixed(2)} $`;
@@ -40,8 +40,8 @@ export default function HomePage() {
                 const headers = token ? { Authorization: token } : {};
 
                 const [resMonuments, resCircuits] = await Promise.all([
-                    fetch(`${API_BASE_URL}/api/monuments`, { headers }),
-                    fetch(`${API_BASE_URL}/api/circuits`, { headers })
+                    fetch(`${API_BASE}/api/monuments`, { headers }),
+                    fetch(`${API_BASE}/api/circuits`, { headers })
                 ]);
 
                 const dataMonuments = await resMonuments.json();

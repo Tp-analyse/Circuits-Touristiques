@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import NavLinks from "../navLinks/NavLinks";
+import NavLinks from "./NavLinks";
 
 export default function MainNavigation() {
     return (
