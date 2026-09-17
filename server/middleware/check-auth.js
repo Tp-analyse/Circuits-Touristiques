@@ -12,7 +12,7 @@ const checkAuth = (req, res, next) => {
             throw new HttpError('Authentification échouée', 401);
         }
 
-        const decodedToken = jwt.verify(token, 'SECRET');
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         req.userData = { userId: decodedToken.userId };
         next();
     } catch (error) {

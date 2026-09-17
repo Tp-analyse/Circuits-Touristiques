@@ -5,8 +5,8 @@ const { query } = require('../util/bd');
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
-    oAuthClientId: "AV_0RDXxdbOI343Ab1dperxL-zzQMICucSJOIVxymFrBHyq9USETsTNtqiaf9qhpUZ0TPvZ8YPMF_HQR",
-    oAuthClientSecret: "EItJ60f3s-kQJEoqEyDpyarlZ-xQ8blcaJbw5JluuN5wB_BF83gfzuuNGI4_SiWI-PnTi1Ww9NxqqB9k",
+    oAuthClientId: process.env.PAYPAL_CLIENT_ID,
+    oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET,
   },
   environment: Environment.Sandbox,
   logging: {

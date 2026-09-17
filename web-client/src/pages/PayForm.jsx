@@ -1,6 +1,3 @@
-// email: sb-nybh4350841289@personal.example.com
-// password: Xbu9F?pe
-
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   PayPalProvider,
@@ -25,7 +22,7 @@ export default function PayForm() {
 
     return (
         <PayPalProvider
-            clientId="YKE8J54K4YYKJ" 
+            clientId={import.meta.env.VITE_PAYPAL_CLIENT_ID}
             currency="CAD"
             intent="capture"
             components={["paypal-payments"]}

@@ -1,5 +1,3 @@
-// Visualization des données sur azure: https://serveur-b0cxhcg0c4bsgyez.scm.germanywestcentral-01.azurewebsites.net/phpmyadmin
-
 const mysql = require('mysql');
 const bcrypt = require('bcryptjs');
 
@@ -28,10 +26,10 @@ const inApp = process.env.MYSQLCONNSTR_localdb
     : null;
 
 const pool = mysql.createPool({
-    host: inApp ? inApp.host : (process.env.DB_HOST || 'localhost'),
-    user: inApp ? inApp.user : (process.env.DB_USER || 'data'),
-    password: inApp ? inApp.password : (process.env.DB_PASSWORD || '1234'),
-    database: inApp ? inApp.database : (process.env.DB_NAME || 'gestionProduit'),
+    host: inApp ? inApp.host : process.env.DB_HOST,
+    user: inApp ? inApp.user : process.env.DB_USER,
+    password: inApp ? inApp.password : process.env.DB_PASSWORD,
+    database: inApp ? inApp.database : process.env.DB_NAME,
     port: inApp ? inApp.port : (Number(process.env.DB_PORT) || 3306),
     ssl: !inApp && process.env.DB_HOST && process.env.DB_HOST !== 'localhost'
         ? { rejectUnauthorized: false }
