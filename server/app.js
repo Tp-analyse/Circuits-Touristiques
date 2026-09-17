@@ -1,4 +1,5 @@
 require('dotenv').config({ quiet: true });
+require('./util/check-env')();
 
 const express = require('express');
 const cors = require('cors');
