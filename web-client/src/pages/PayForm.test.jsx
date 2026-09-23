@@ -68,6 +68,7 @@ describe("PayForm", () => {
 	});
 
 	it("affiche le bouton PayPal", () => {
+		vi.stubEnv("VITE_PAYPAL_CLIENT_ID", "test-client-id");
 		mockUseLocation.mockReturnValue({
 			state: {
 				circuit: {
@@ -87,6 +88,32 @@ describe("PayForm", () => {
 		expect(
 			screen.getByRole("button", { name: /paypal mock button/i })
 		).toBeInTheDocument();
+		vi.unstubAllEnvs();
+	});
+
+	it("indique que le paiement est indisponible sans PayPal configuré", () => {
+		vi.stubEnv("VITE_PAYPAL_CLIENT_ID", "");
+		mockUseLocation.mockReturnValue({
+			state: {
+				circuit: {
+					id: 1,
+					nom: "Circuit Europe",
+					nbjours: 5,
+					ville_depart: "Paris",
+					ville_arrivee: "Rome",
+					total_prix: 250,
+					itineraire: [],
+				},
+			},
+		});
+
+		render(<PayForm />);
+
+		expect(screen.getByText(/paiement indisponible/i)).toBeInTheDocument();
+		expect(
+			screen.queryByRole("button", { name: /paypal mock button/i })
+		).not.toBeInTheDocument();
+		vi.unstubAllEnvs();
 	});
 
 	it("retourne à la page précédente quand on clique sur Retour", () => {

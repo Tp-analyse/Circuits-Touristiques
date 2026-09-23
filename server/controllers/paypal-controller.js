@@ -3,22 +3,36 @@ const { validationResult } = require('express-validator');
 const { query } = require('../util/bd');
 
 
-const client = new Client({
-  clientCredentialsAuthCredentials: {
-    oAuthClientId: process.env.PAYPAL_CLIENT_ID,
-    oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET,
-  },
-  environment: Environment.Sandbox,
-  logging: {
-    logLevel: LogLevel.Info,
-    logRequest: { logBody: true },
-    logResponse: { logHeaders: true },
-  },
-});
+// PayPal is optional: without keys the server runs and the payment routes return 503
+const paypalConfigured = Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET);
 
-const ordersController = new OrdersController(client);
+let ordersController = null;
+if (paypalConfigured) {
+  const client = new Client({
+    clientCredentialsAuthCredentials: {
+      oAuthClientId: process.env.PAYPAL_CLIENT_ID,
+      oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET,
+    },
+    environment: Environment.Sandbox,
+    logging: {
+      logLevel: LogLevel.Info,
+      logRequest: { logBody: true },
+      logResponse: { logHeaders: true },
+    },
+  });
+  ordersController = new OrdersController(client);
+} else {
+  console.warn("PayPal not configured: set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in server/.env to enable payments.");
+}
+
+const paypalNotConfigured = (res) =>
+  res.status(503).json({ error: "PayPal not configured" });
 
 const createOrder = async (req, res, next) => {
+  if (!ordersController) {
+    return paypalNotConfigured(res);
+  }
+
   if (!validationResult(req).isEmpty()) {
     return res.status(400).json({ error: "Amount must be a positive number" });
   }
@@ -53,6 +67,10 @@ const createOrder = async (req, res, next) => {
 };
 
 const captureOrder = async (req, res, next) => {
+  if (!ordersController) {
+    return paypalNotConfigured(res);
+  }
+
   if (!validationResult(req).isEmpty()) {
     return res.status(400).json({ error: "Invalid circuitId" });
   }
